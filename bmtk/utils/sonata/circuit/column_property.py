@@ -74,6 +74,13 @@ class ColumnProperty(object):
                     columns.append(ColumnProperty.from_h5(ds, name))
             return columns
 
+        elif isinstance(hf_obj, pd.DataFrame):
+            n_rows = len(hf_obj)
+            columns = []
+            for c in hf_obj.columns:
+                columns.append(cls(c, hf_obj[c].dtype, 1, n_rows))
+            return columns
+
         else:
             raise Exception('Unable to convert hdf5 object {} to a property or list of properties.'.format(hf_obj))
 

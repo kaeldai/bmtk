@@ -27,7 +27,7 @@ import h5py
 import pandas as pd
 import numpy as np
 
-from . import utils
+from .. import utils
 from .population import NodePopulation, EdgePopulation
 from .types_table import NodeTypesTable, EdgeTypesTable
 

@@ -20,7 +20,7 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-from . import utils
+from .. import utils
 from .file_root import NodesRoot, EdgesRoot
 
 
@@ -35,7 +35,8 @@ class File(object):
         # Open and check HDF5 file(s)
         self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
         if require_magic:
-            map(utils.check_magic, self._h5_file_handles)  # Check magic attribute in h5 files
+            for h5file in self._h5_file_handles:
+                utils.check_magic(h5file)  # Check magic attribute in h5 files
 
         # Check version number
         avail_versions = set(map(utils.get_version, self._h5_file_handles))

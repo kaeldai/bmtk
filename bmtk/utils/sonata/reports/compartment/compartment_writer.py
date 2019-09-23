@@ -2,10 +2,12 @@ import os
 import h5py
 import numpy as np
 
-from bmtk.utils.sonata.utils import add_hdf5_magic, add_hdf5_version
 from .compartment_reader import CompartmentReaderVer01 as CompartmentReader
 from .core import CompartmentWriterABC
+from ...utils import add_hdf5_magic, add_hdf5_version
+from ...iotools import sonata_world_comm
 
+"""
 try:
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
@@ -17,6 +19,7 @@ except Exception as exc:
     rank = 0
     nhosts = 1
     barrier = lambda: None
+"""
 
 
 class PopulationWriterv01(CompartmentWriterABC, CompartmentReader):
@@ -292,8 +295,8 @@ class CompartmentWriterv01(CompartmentWriterABC):
         self._h5_handle = None
         self._h5report_grp = None
 
-        self._mpi_rank = kwargs.get('mpi_rank', rank)
-        self._mpi_size = kwargs.get('mpi_size', nhosts)
+        self._mpi_rank = kwargs.get('mpi_rank', sonata_world_comm.MPI_rank)
+        self._mpi_size = kwargs.get('mpi_size', sonata_world_comm.MPI_size)
 
         self._final_fpath = file_path  # name of file being writen too.
         self._cache_dir = cache_dir or os.path.dirname(os.path.abspath(file_path))  # used for mulitple ranks
@@ -380,7 +383,7 @@ class CompartmentWriterv01(CompartmentWriterABC):
             self.merge()
 
     def merge(self):
-        barrier()
+        sonata_world_comm.barrier()
         if self._mpi_size > 1 and self._mpi_rank == 0:
             h5final = h5py.File(self._final_fpath, 'w')
             tmp_reports = [CompartmentReader(name) for name in self.temp_files]
@@ -488,7 +491,7 @@ class CompartmentWriterv01(CompartmentWriterABC):
 
             for tmp_file in self.temp_files:
                 os.remove(tmp_file)
-        barrier()
+        sonata_world_comm.barrier()
 
     def _build_or_fetch_pop(self, population):
         if population is None:

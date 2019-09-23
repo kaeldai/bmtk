@@ -24,7 +24,7 @@ import pandas as pd
 import h5py
 import numpy as np
 
-from .utils import range_itr, get_attribute_h5
+from ..utils import range_itr, get_attribute_h5
 from .node import Node, NodeSet
 from .edge import Edge, EdgeSet
 from .group import NodeGroup, EdgeGroup
