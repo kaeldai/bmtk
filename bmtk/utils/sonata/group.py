@@ -56,7 +56,8 @@ class Group(object):
 
         # For storing dynamics_params subgroup (if it exists)
         self._has_dynamics_params = 'dynamics_params' in self._h5_group and len(self._h5_group['dynamics_params']) > 0
-        self._dynamics_params_columns = []
+        self._dynamics_params_columns = ColumnProperty.from_h5(h5_group['dynamics_params']) if self._has_dynamics_params else []
+        self._dynamics_params_grp = h5_group['dynamics_params'] if self._has_dynamics_params else None
 
         # An index of all the rows in parent population that map onto a member of this group
         self._parent_indicies = None  # A list of parent rows indicies
@@ -70,7 +71,7 @@ class Group(object):
 
     @property
     def has_dynamics_params(self):
-        return False
+        return self._has_dynamics_params
 
     @property
     def columns(self):
@@ -139,6 +140,14 @@ class Group(object):
         group_props = {}
         for cname, h5_obj in self._group_table.items():
             group_props[cname] = h5_obj[group_index]
+
+        if self.has_dynamics_params:
+            dyn_params_dict = {}
+
+            for name, h5item in self._dynamics_params_grp.items():
+                dyn_params_dict[name] =  h5item[group_index]
+            group_props['dynamics_params'] = dyn_params_dict
+
         return group_props
 
     def __contains__(self, prop_name):
