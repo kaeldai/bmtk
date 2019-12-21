@@ -40,7 +40,7 @@ class Group(object):
         self._parent = parent
         self._types_table = parent.types_table
         self._h5_group = h5_group
-        self._types_index_col = self._types_table.index_column_name
+        # self._types_index_col = self._types_table.index_column_name
 
         self._group_columns = ColumnProperty.from_h5(h5_group)
         # TODO: combine group_columns, group_column_names and group_columns_map, doesn't need to be 3 structures
@@ -83,10 +83,6 @@ class Group(object):
     @property
     def all_columns(self):
         return self._all_columns
-
-    @property
-    def has_gids(self):
-        return self._parent.has_gids
 
     @property
     def parent(self):
@@ -163,11 +159,6 @@ class NodeGroup(Group):
         self.build_indicies()
         return self._parent.inode_type_ids(self._parent_indicies)
 
-    @property
-    def gids(self):
-        self.build_indicies()
-        return self._parent.igids(self._parent_indicies)
-
     def build_indicies(self, force=False):
         if self._parent_indicies_built and not force:
             return
@@ -226,8 +217,6 @@ class NodeGroup(Group):
         root_df['node_type_id'] = pd.Series(self.node_type_ids)
         root_df['node_id'] = pd.Series(self.node_ids)
         root_df['node_group_index'] = pd.Series(self._parent.igroup_indicies(self._parent_indicies))  # used as pivot
-        if self._parent.has_gids:
-            root_df['gid'] = self.gids
 
         # merge group props df with parent df
         results_df = root_df.merge(properties_df, how='left', left_on='node_group_index', right_index=True)

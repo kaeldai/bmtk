@@ -29,7 +29,7 @@ import numpy as np
 
 from .. import utils
 from .population import NodePopulation, EdgePopulation
-from .types_table import NodeTypesTable, EdgeTypesTable
+# from .types_table import NodeTypesTable, EdgeTypesTable
 
 
 class FileRoot(object):
@@ -147,98 +147,105 @@ class NodesRoot(FileRoot):
     def node_types_table(self):
         return self.types_table
 
-    def set_gid_table(self, gid_table, force=False):
-        """Adds a map from a gids <--> (node_id, population) based on specification.
+    # def set_gid_table(self, gid_table, force=False):
+    #     """Adds a map from a gids <--> (node_id, population) based on specification.
+    #
+    #     :param gid_table: An h5 file/group containing map specifications
+    #     :param force: Set to true to have it overwrite any exsiting gid table (default False)
+    #     """
+    #     assert(gid_table is not None)
+    #     if self.has_gids and not force:
+    #         raise Exception('gid table already exists (use force=True to overwrite)')
+    #
+    #     self._gid_table = utils.load_h5(gid_table, 'r')
+    #     # TODO: validate that the correct columns/dtypes exists.
+    #     gid_df = pd.DataFrame()
+    #     gid_df['gid'] = pd.Series(data=self._gid_table['gid'], dtype=self._gid_table['gid'].dtype)
+    #     gid_df['node_id'] = pd.Series(data=self._gid_table['node_id'], dtype=self._gid_table['node_id'].dtype)
+    #     gid_df['population'] = pd.Series(data=self._gid_table['population'])
+    #     population_names_ds = self._gid_table['population_names']
+    #     for pop_id, subset in gid_df.groupby(by='population'):
+    #         pop_name = population_names_ds[pop_id]
+    #         self._gid_table_groupby[pop_name] = subset
+    #     self._has_gids = True
 
-        :param gid_table: An h5 file/group containing map specifications
-        :param force: Set to true to have it overwrite any exsiting gid table (default False)
-        """
-        assert(gid_table is not None)
-        if self.has_gids and not force:
-            raise Exception('gid table already exists (use force=True to overwrite)')
-
-        self._gid_table = utils.load_h5(gid_table, 'r')
-        # TODO: validate that the correct columns/dtypes exists.
-        gid_df = pd.DataFrame()
-        gid_df['gid'] = pd.Series(data=self._gid_table['gid'], dtype=self._gid_table['gid'].dtype)
-        gid_df['node_id'] = pd.Series(data=self._gid_table['node_id'], dtype=self._gid_table['node_id'].dtype)
-        gid_df['population'] = pd.Series(data=self._gid_table['population'])
-        population_names_ds = self._gid_table['population_names']
-        for pop_id, subset in gid_df.groupby(by='population'):
-            pop_name = population_names_ds[pop_id]
-            self._gid_table_groupby[pop_name] = subset
-        self._has_gids = True
-
-    def generate_gids(self, file_name, gids=None, force=False):
-        """Creates a gid <--> (node_id, population) table based on sonnet specifications.
-
-         Generating gids will take some time and so not recommend to call this during the simulation. Instead save
-         the file to the disk and pass in h5 file during the simulation (using gid_table parameter). In fact if you're
-         worried about efficeny don't use this method.
-
-        :param file_name: Name of h5 file to save gid map to.
-        :param gids: rule/list of gids to use
-        :param force: set to true to overwrite existing gid map (default False).
-        """
-
-        # TODO: This is very inefficent, fix (although not a priority as this function should be called sparingly)
-        # TODO: Allow users to pass in a list/function to determine gids
-        # TODO: We should use an enumerated lookup table for population ds instead of storing strings
-        # TODO: Move this to a utils function rather than a File
-        if self.has_gids and not force:
-            raise Exception('Nodes already have a gid table. Use force=True to overwrite existing gids.')
-
-        dir_name = os.path.dirname(os.path.abspath(file_name))
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-
-        with h5py.File(file_name, 'w') as h5:
-            # TODO: should we use mode 'x', or give an option to overwrite existing files
-            n_nodes = 0
-            ascii_len = 0  # store max population name for h5 fixed length strings
-            # Find population names and the total size of every population
-            for node_pop in self.populations:
-                n_nodes += len(node_pop)
-                name_nchars = len(node_pop.name)
-                ascii_len = ascii_len if ascii_len >= name_nchars else name_nchars
-
-            # node_id and gid datasets should just be unsigned integers
-            h5.create_dataset(name='gid', shape=(n_nodes,), dtype=np.uint64)
-            h5.create_dataset(name='node_id', shape=(n_nodes,), dtype=np.uint64)
-            # TODO: determine population precisions from num of populations
-            h5.create_dataset(name='population', shape=(n_nodes,), dtype=np.uint16)
-
-            # Create a lookup table for pop-name
-            pop_name_list = [pname for pname in self.population_names]
-            if utils.using_py3:
-                dt = h5py.special_dtype(vlen=str)  # python 3
-            else:
-                dt = h5py.special_dtype(vlen=unicode)  # python 2
-            h5.create_dataset(name='population_names', shape=(len(pop_name_list),), dtype=dt)
-            # No clue why but just passing in the data during create_dataset doesn't work h5py
-            for i, n in enumerate(pop_name_list):
-                h5['population_names'][i] = n
-
-            # write each (gid, node_id, population)
-            indx = 0
-            for node_pop in self.populations:
-                # TODO: Block write if special gid generator isn't being used
-                # TODO: Block write populations at least
-                pop_name = node_pop.name # encode('ascii', 'ignore')
-                pop_id = pop_name_list.index(pop_name)
-                for node in node_pop:
-                    h5['node_id'][indx] = node.node_id
-                    h5['population'][indx] = pop_id
-                    h5['gid'][indx] = indx
-                    indx += 1
-
-            # pass gid table to current nodes
-            self.set_gid_table(h5)
+    # def generate_gids(self, file_name, gids=None, force=False):
+    #     """Creates a gid <--> (node_id, population) table based on sonnet specifications.
+    #
+    #      Generating gids will take some time and so not recommend to call this during the simulation. Instead save
+    #      the file to the disk and pass in h5 file during the simulation (using gid_table parameter). In fact if you're
+    #      worried about efficeny don't use this method.
+    #
+    #     :param file_name: Name of h5 file to save gid map to.
+    #     :param gids: rule/list of gids to use
+    #     :param force: set to true to overwrite existing gid map (default False).
+    #     """
+    #
+    #     # TODO: This is very inefficent, fix (although not a priority as this function should be called sparingly)
+    #     # TODO: Allow users to pass in a list/function to determine gids
+    #     # TODO: We should use an enumerated lookup table for population ds instead of storing strings
+    #     # TODO: Move this to a utils function rather than a File
+    #     if self.has_gids and not force:
+    #         raise Exception('Nodes already have a gid table. Use force=True to overwrite existing gids.')
+    #
+    #     dir_name = os.path.dirname(os.path.abspath(file_name))
+    #     if not os.path.exists(dir_name):
+    #         os.makedirs(dir_name)
+    #
+    #     with h5py.File(file_name, 'w') as h5:
+    #         # TODO: should we use mode 'x', or give an option to overwrite existing files
+    #         n_nodes = 0
+    #         ascii_len = 0  # store max population name for h5 fixed length strings
+    #         # Find population names and the total size of every population
+    #         for node_pop in self.populations:
+    #             n_nodes += len(node_pop)
+    #             name_nchars = len(node_pop.name)
+    #             ascii_len = ascii_len if ascii_len >= name_nchars else name_nchars
+    #
+    #         # node_id and gid datasets should just be unsigned integers
+    #         h5.create_dataset(name='gid', shape=(n_nodes,), dtype=np.uint64)
+    #         h5.create_dataset(name='node_id', shape=(n_nodes,), dtype=np.uint64)
+    #         # TODO: determine population precisions from num of populations
+    #         h5.create_dataset(name='population', shape=(n_nodes,), dtype=np.uint16)
+    #
+    #         # Create a lookup table for pop-name
+    #         pop_name_list = [pname for pname in self.population_names]
+    #         if utils.using_py3:
+    #             dt = h5py.special_dtype(vlen=str)  # python 3
+    #         else:
+    #             dt = h5py.special_dtype(vlen=unicode)  # python 2
+    #         h5.create_dataset(name='population_names', shape=(len(pop_name_list),), dtype=dt)
+    #         # No clue why but just passing in the data during create_dataset doesn't work h5py
+    #         for i, n in enumerate(pop_name_list):
+    #             h5['population_names'][i] = n
+    #
+    #         # write each (gid, node_id, population)
+    #         indx = 0
+    #         for node_pop in self.populations:
+    #             # TODO: Block write if special gid generator isn't being used
+    #             # TODO: Block write populations at least
+    #             pop_name = node_pop.name # encode('ascii', 'ignore')
+    #             pop_id = pop_name_list.index(pop_name)
+    #             for node in node_pop:
+    #                 h5['node_id'][indx] = node.node_id
+    #                 h5['population'][indx] = pop_id
+    #                 h5['gid'][indx] = indx
+    #                 indx += 1
+    #
+    #         # pass gid table to current nodes
+    #         self.set_gid_table(h5)
 
     def _build_types_table(self):
-        self.types_table = NodeTypesTable()
-        for _, csvhandle in self._csv_handles:
+        self.types_table = self._csv_handles[0]
+        for _, csvhandle in self._csv_handles[1:]:
             self.types_table.add_table(csvhandle)
+        # print(self.types_table)
+
+        #print(self._csv_handles)
+
+        #self.types_table = NodeTypesTable()
+        #for _, csvhandle in self._csv_handles:
+        #    self.types_table.add_table(csvhandle)
 
     def _build_population(self, pop_name, pop_group):
         return NodePopulation(pop_name, pop_group, self.node_types_table)

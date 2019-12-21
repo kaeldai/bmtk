@@ -26,6 +26,8 @@ import sys
 import h5py
 import pandas as pd
 import numpy as np
+import warnings
+import functools
 
 MAGIC_ATTR = 'magic'
 MAGIC_VAL = 0x0A7A
@@ -51,8 +53,10 @@ def listify(files):
 
 
 def load_h5(h5file, mode='r'):
-    # TODO: Allow for h5py.Group also
     if isinstance(h5file, h5py.File):
+        return h5file
+
+    if isinstance(h5file, h5py.Group):
         return h5file
 
     return h5py.File(h5file, mode)
@@ -76,13 +80,21 @@ def get_attribute_h5(h5obj, attribut_name, default=None):
     return val
 
 
-def check_magic(hdf5_file):
+def check_magic(hdf5_file, warning_only=False):
     """Check the magic attribute exists according to the sonata format"""
     h5_file_obj = load_h5(hdf5_file)
+    msg = None
     if MAGIC_ATTR not in h5_file_obj.attrs:
-        raise Exception('File {} missing top-level \"{}\" attribute.'.format(h5_file_obj.filename, MAGIC_ATTR))
+        msg = 'File {} missing top-level \"{}\" attribute.'.format(h5_file_obj.filename, MAGIC_ATTR)
     elif np.uint32(get_attribute_h5(hdf5_file, MAGIC_ATTR)) != MAGIC_VAL:
-        raise Exception('File {} has unexpected magic value (expected {})'.format(h5_file_obj.filename, MAGIC_VAL))
+        msg = 'File {} has unexpected magic value (expected {})'.format(h5_file_obj.filename, MAGIC_VAL)
+
+    if msg is not None:
+        if warning_only:
+            warnings.warn(msg)
+            return False
+        else:
+            raise AttributeError(msg)
 
     return True
 
@@ -113,6 +125,20 @@ def get_node_ids(nodes_path, population):
     with h5py.File(nodes_path, 'r') as h5:
         node_ids = h5['/nodes'][population]['node_id'][()]
     return node_ids
+
+
+class lazy_property(object):
+    """A method decorator for caching class properties."""
+    def __init__(self, fnc):
+        self.fnc = fnc
+        functools.update_wrapper(self, fnc)
+
+    def __get__(self, obj, _type):
+        if obj is None:
+            return self
+        val = self.fnc(obj)
+        obj.__dict__[self.fnc.__name__] = val
+        return val
 
 
 if sys.version_info[0] == 3:

@@ -24,6 +24,9 @@ from .. import utils
 from .file_root import NodesRoot, EdgesRoot
 
 
+
+
+
 class File(object):
     def __init__(self, data_files, data_type_files, mode='r', gid_table=None, require_magic=True):
         if mode != 'r':

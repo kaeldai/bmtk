@@ -20,6 +20,7 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+from ..utils import lazy_property
 
 
 class NodeSet(object):
@@ -74,9 +75,8 @@ class NodeSet(object):
 class Node(object):
     # TODO: include population name/reference
     # TODO: make a dictionary (or preferably a collections.MutableMap
-    def __init__(self, node_id, node_type_id, node_types_props, group_id, group_props, dynamics_params, gid=None):
+    def __init__(self, node_id, node_type_id, node_types_props, group_id, group_props, dynamics_params):
         self._node_id = node_id
-        self._gid = gid
         self._node_type_id = node_type_id
         self._node_type_props = node_types_props
         self._group_id = group_id
@@ -85,10 +85,6 @@ class Node(object):
     @property
     def node_id(self):
         return self._node_id
-
-    @property
-    def gid(self):
-        return self._gid
 
     @property
     def group_id(self):
@@ -110,6 +106,13 @@ class Node(object):
     def dynamics_params(self):
         raise NotImplementedError
 
+    @lazy_property
+    def columns(self):
+        cols = {'node_id'}
+        cols.update(self.node_type_properties.keys())
+        cols.update(self.group_props.keys())
+        return cols
+
     def __getitem__(self, prop_key):
         if prop_key in self._group_props:
             return self._group_props[prop_key]
@@ -124,3 +127,10 @@ class Node(object):
 
     def __contains__(self, prop_key):
         return prop_key in self._group_props or prop_key in self._node_type_props
+
+    def __repr__(self):
+        ret_dict = {}
+        ret_dict.update(self.node_type_properties)
+        ret_dict.update(self.group_props)
+        ret_dict['node_id'] = self.node_id
+        return repr(ret_dict)

@@ -20,35 +20,51 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+import os
 import pandas as pd
 import h5py
 import numpy as np
 
-from ..utils import range_itr, get_attribute_h5
+from ..utils import range_itr, get_attribute_h5, lazy_property
 from .node import Node, NodeSet
 from .edge import Edge, EdgeSet
 from .group import NodeGroup, EdgeGroup
+from .types_table import TypesTable
+from .column_property import ColumnProperty
+from . import network_props
+from . import model_props
+from . import node_ids_table
+
+
+
+
+
+
 
 
 class Population(object):
     def __init__(self, pop_name, pop_group, types_table):
         self._pop_name = pop_name
         self._pop_group = pop_group
-        self._types_table = types_table
+        #self._types_table = types_table
         self._nrows = 0
 
         # For storing individual groups
-        self._group_map = {}  # grp-id --> h5py.Group object
-        self._find_groups()
+        #self._group_map = {}  # grp-id --> h5py.Group object
+        #self._find_groups()
         self._group_cache = {}  # grp-id --> soneta.io.Group() object
 
         # Refrences to most of the population's primary dataset
-        self._type_id_ds = pop_group[self.type_ids_column]
-        self._group_id_ds = pop_group[self.group_id_column]
-        self._group_index_ds = pop_group[self.group_index_column]
 
-        self._group_indicies = {}  # grp-id --> list of rows indicies
-        self._group_indicies_cache_built = False
+        self._network_props = network_props.load(types_table, population_name=pop_name, parent=pop_group,
+                                                 ctype=self.ctype)
+
+        # self._model_props = model_props.load(pop_group, node_ids=self.ctype)
+        #self._group_id_ds = pop_group[self.group_id_column]
+        #self._group_index_ds = pop_group[self.group_index_column]
+
+        #self._group_indicies = {}  # grp-id --> list of rows indicies
+        #self._group_indicies_cache_built = False
 
     @property
     def name(self):
@@ -56,22 +72,36 @@ class Population(object):
         return self._pop_name
 
     @property
+    def ctype(self):
+        raise NotImplementedError()
+
+    @property
     def group_ids(self):
         """List of all group_ids belonging to population"""
-        return list(self._group_map.keys())
+        return self.model_ids
+
+    @property
+    def model_ids(self):
+        return self._model_props.ids
 
     @property
     def groups(self):
         """Returns a list of sonata.Group objects"""
-        return [self.get_group(name) for name in self._group_map.keys()]
+        return self._model_props.groups
+
+    @property
+    def models(self):
+        return self._model_props
 
     @property
     def types_table(self):
-        return self._types_table
+        return self._network_props
+        # return self._types_table
 
     @property
     def type_ids(self):
-        return np.array(self._type_id_ds)
+        return self._network_props.ids
+        # return np.array(self._type_id_ds)
 
     @property
     def group_id_ds(self):
@@ -89,22 +119,12 @@ class Population(object):
     def group_index_column(self):
         raise NotImplementedError
 
-    @property
-    def type_ids_column(self):
-        raise NotImplementedError
-
     def to_dataframe(self):
         """Convert Population to dataframe"""
         raise NotImplementedError
 
     def get_group(self, group_id):
-        if group_id in self._group_cache:
-            return self._group_cache[group_id]
-        else:
-            grp_h5 = self._group_map[group_id]
-            grp_obj = self._build_group(group_id, grp_h5)
-            self._group_cache[group_id] = grp_obj
-            return grp_obj
+        return self._model_props.get_group(group_id)
 
     def group_indicies(self, group_id, build_cache=False):
         """Returns a list of all the population row index that maps onto the given group.
@@ -122,7 +142,7 @@ class Population(object):
         else:
             tmp_index = pd.DataFrame()
             # TODO: Need to check the memory overhead, especially for edges. See if an iterative search is just as fast
-            tmp_index['grp_id'] = pd.Series(self._group_id_ds[()], dtype=self._group_id_ds.dtype)
+            tmp_index['grp_id'] = pd.Series(self._group_id_ds.values, dtype=self._group_id_ds.dtype)
             tmp_index['row_indx'] = pd.Series(range_itr(self._nrows), dtype=np.uint32)
             if build_cache:
                 # save all indicies as arrays
@@ -141,15 +161,15 @@ class Population(object):
     def igroup_indicies(self, row_indicies):
         return self._group_index_ds[list(row_indicies)]
 
-    def _find_groups(self):
-        """Create a map between group-id and h5py.Group reference"""
-        for grp_key, grp_h5 in self._pop_group.items():
-            if grp_key.isdigit():
-                grp_id = int(grp_key)
-                self._group_map[grp_id] = grp_h5
-            else:
-                # TODO: Should we put a warning if an unrecognized group exists?
-                pass
+    # def _find_groups(self):
+    #     """Create a map between group-id and h5py.Group reference"""
+    #     for grp_key, grp_h5 in self._pop_group.items():
+    #         if grp_key.isdigit():
+    #             grp_id = int(grp_key)
+    #             self._group_map[grp_id] = grp_h5
+    #         else:
+    #             # TODO: Should we put a warning if an unrecognized group exists?
+    #             pass
 
     def _build_group(self, group_id, group_h5):
         raise NotImplementedError
@@ -157,108 +177,108 @@ class Population(object):
     def __len__(self):
         return self._nrows
 
-
-class NodePopulation(Population):
-    def __init__(self, pop_name, pop_group, node_types_tables):
-        super(NodePopulation, self).__init__(pop_name=pop_name, pop_group=pop_group, types_table=node_types_tables)
-
-        # TODO: node_ids can be implicit
-        self._node_id_ds = pop_group['node_id']
-        self._nrows = len(self._node_id_ds)
-
-        # TODO: This isn't necessary if only using iterator. Delay building index until get_node() is called.
-        self._index_nid2row = None  # A lookup from node_id --> h5 row number
-        self._node_id_index_built = False
-        self._build_node_id_index()
-
-        # indicies for gid <--> node_id map
-        self._has_gids = False
-        self._index_gid2row = None  # gid --> row (for searching by gid)
-        self._index_row2gid = None  # row --> gid (for iterator or searching by node-id)
-        self._gid_lookup_fnc = lambda _: None  # for looking up gid by row, use fnc pointer rather than conditional
-
-        self.__itr_index = 0  # for iterator
-
+"""
+class NodeIDs(object):
     @property
-    def group_id_column(self):
-        return 'node_group_id'
-
-    @property
-    def group_index_column(self):
-        return 'node_group_index'
-
-    @property
-    def type_ids_column(self):
-        return 'node_type_id'
-
-    @property
-    def has_gids(self):
-        return self._has_gids
+    def is_indexed(self):
+        pass
 
     @property
     def node_ids(self):
-        return np.array(self._node_id_ds)
+        raise NotImplementedError()
 
     @property
     def gids(self):
-        if self.has_gids:
-            return np.array(self._index_gid2row.index)
-        else:
-            return None
+        return self.node_ids
+
+    def get_node_id(self, node_id):
+        raise NotImplementedError()
+
+    def loc(self, node_id):
+        pass
+
+    @staticmethod
+    def load(sonata_obj):
+        if 'node_id' in sonata_obj:
+            return HDF5NodeIDs(node_ids_ds=sonata_obj['node_id'])
+
+    def __len__(self):
+        return len(self.node_ids)
+
+
+class HDF5NodeIDs(NodeIDs):
+    def __init__(self, node_ids_ds, column_name='node_id'):
+        self._column_name = column_name
+        self._node_ids_ds = node_ids_ds
+
+    @property
+    def column_name(self):
+        return self.column_name
+
+    @property
+    def node_ids(self):
+        return np.array(self._node_ids_ds)
+
+    @lazy_property
+    def row_lu(self):
+        return pd.Series(range_itr(len(self)), index=self.node_ids, dtype=self.node_ids.dtype)
+
+    def get_row(self, node_id):
+        return self.row_lu.loc[node_id]
+
+    def get_node_id(self, row_index):
+        return self._node_ids_ds[row_index]
+
+    def get_node_ids(self, rows):
+        return self._node_ids_ds[rows]
+
+    def get_gid(self, node_id):
+        return node_id
+"""
+
+class NodePopulation(Population):
+    def __init__(self, pop_name, pop_group, node_types_tables, metadata=None):
+        super(NodePopulation, self).__init__(pop_name=pop_name, pop_group=pop_group, types_table=node_types_tables)
+        self._metadata = metadata or {}
+        self._node_ids_table = node_ids_table.load(population=pop_name, table=pop_group)
+        self._nrows = len(self._node_ids_table)
+
+        self._model_props = model_props.load(pop_group, node_ids=self._node_ids_table,
+                                             network_props=self._network_props, ctype=self.ctype)
+
+        self.__itr_index = 0  # for iterator
+
+    #@property
+    #def group_id_column(self):
+    #    return 'node_group_id'
+
+    #@property
+    #def group_index_column(self):
+    #    return 'node_group_index'
+
+    @property
+    def node_ids(self):
+        return self._node_ids_table.node_ids
+
+    @property
+    def ctype(self):
+        return 'nodes'
 
     @property
     def node_types_table(self):
-        return self._types_table
+        # return self._types_table
+        return self._network_props
 
-    @property
-    def index_column_name(self):
-        return 'node_id'
+    def to_dataframe(self, group_ids=None):
+        return self._model_props.to_dataframe(group_ids=group_ids)
 
-    @property
-    def node_types_table(self):
-        return self.types_table
 
-    def add_gids(self, gid_map_df, force=False):
-        if self.has_gids and not force:
-            # TODO: not sure if it's best to return an exception or just continue on in silence?
-            raise Exception('Node population {} already has gids mapped onto node-ids.'.format(self.name))
-            # return
+    def get_row(self, row_num):
+        node_id = self._node_ids_table.get_row(row_num)
+        model_props = self._model_props.get_props(row_num)
+        network_props = self._network_props.get_props(row_num)
 
-        # Create map from gid --> node_id --> row #
-        self._build_node_id_index()
-        tmp_df = pd.DataFrame()
-        tmp_df['row_id'] = self._index_nid2row.index
-        tmp_df['node_id'] = self._index_nid2row
-        gid_map_df = gid_map_df.merge(tmp_df, how='left', left_on='node_id', right_on='node_id')
-        gid_map_df = gid_map_df.drop(['node_id', 'population'], axis=1)
-        self._index_gid2row = gid_map_df.set_index('gid')
-        self._index_row2gid = gid_map_df.set_index('row_id')
-        self._gid_lookup_fnc = lambda row_indx: self._index_row2gid.loc[row_indx]['gid']
-        self._has_gids = True
-
-    def to_dataframe(self):
-        if len(self.groups) == 1:
-            return self.get_group(self.group_ids[0]).to_dataframe()
-        else:
-            dataframes = pd.DataFrame()
-            for grp_id in self.group_ids:
-                dataframes = dataframes.append(self.get_group(grp_id).to_dataframe(), sort=False)
-            dataframes = dataframes.set_index('node_id')
-            return dataframes
-
-    def get_row(self, row_indx):
-        # TODO: Use helper function so we don't have to lookup gid/node_id twice
-        # Note: I'm not cacheing the nodes for memory purposes, but it might be beneificial too.
-        node_id = self._node_id_ds[row_indx]
-        node_type_id = self._type_id_ds[row_indx]
-        node_group_id = self._group_id_ds[row_indx]
-        node_group_index = self._group_index_ds[row_indx]
-
-        node_type_props = self.node_types_table[node_type_id]
-        node_group_props = self.get_group(node_group_id)[node_group_index]
-        node_gid = self._gid_lookup_fnc(row_indx)
-
-        return Node(node_id, node_type_id, node_type_props, node_group_id, node_group_props, None, gid=node_gid)
+        return Node(node_id, 100, network_props, None, model_props, None)
 
     def get_rows(self, row_indicies):
         """Returns a set of all nodes based on list of row indicies.
@@ -273,40 +293,21 @@ class NodePopulation(Population):
         return NodeSet(row_indicies, self)
 
     def inode_ids(self, row_indicies):
-        # You get errors if row_indicies is a numpy array or panda series so convert to python list
-        # TODO: list conversion can be expensive, see if h5py will work with np arrays natively.
-        return self._node_id_ds[list(row_indicies)]
+        return self._node_ids_table.get_node_id(row_indicies)
 
-    def igids(self, row_indicies):
-        gids = self._gid_lookup_fnc(row_indicies)
-        if gids is not None:
-            gids = np.array(gids)
-        return gids
-
-    def inode_type_ids(self, row_indicies):
-        # self._node_type_id_ds
-        return self._type_id_ds[list(row_indicies)]
+    def inode_type_ids(self, rows):
+        ## self._node_type_id_ds
+        ## return self._type_id_ds[list(row_indicies)]
+        return self._network_props.get_ids(rows)
 
     def get_node_id(self, node_id):
-        row_indx = self._index_nid2row.loc[node_id]
-        return self.get_row(row_indx)
-
-    def get_gid(self, gid):
-        # assert(self.has_gids)
-        row_indx = self._index_gid2row.loc[gid]['row_id']
+        row_indx = self._node_ids_table.get_row(node_id=node_id)
         return self.get_row(row_indx)
 
     def filter(self, **filter_props):
         for grp in self.groups:
             for node in grp.filter(**filter_props):
                 yield node
-
-    def _build_node_id_index(self, force=False):
-        if self._node_id_index_built and not force:
-            return
-
-        self._index_nid2row = pd.Series(range_itr(self._nrows), index=self._node_id_ds, dtype=self._node_id_ds.dtype)
-        self._node_id_index_built = True
 
     def _build_group(self, group_id, group_h5):
         return NodeGroup(group_id, group_h5, self)
@@ -342,6 +343,43 @@ class NodePopulation(Population):
         else:
             print('Unable to get item using {}.'.format(type(item)))
 
+    def __repr__(self):
+        ret_str = '{\n'
+        ret_str += '  population name: {}\n'.format(self.name)
+        ret_str += '  num of nodes: {}\n'.format(len(self))
+        ret_str += '  node_types_table: {}\n'.format(self.node_types_table)
+        ret_str += '  class: {}\n'.format(self.__class__)
+        for k, v in self._metadata.items():
+            ret_str += '  {}: {}\n'.format(k, v)
+        ret_str += '}'
+        return ret_str
+
+
+def load_nodes(name, nodes_table, network_props_table=None, version='0.1'):
+
+    metadata = {}
+    if isinstance(nodes_table, h5py.Group):
+        metadata['format'] = 'HDF5'
+        metadata['file'] = os.path.abspath(nodes_table.file.filename)
+        metadata['location'] = nodes_table.name
+
+    return NodePopulation(name, nodes_table, network_props_table, metadata)
+
+
+class EdgesIndex(object):
+    def __init__(self):
+        pass
+
+    def get_row(self, node_id):
+        pass
+
+    def get_node_id(self, row):
+        pass
+
+    def get_node_ids(self, rows):
+        pass
+
+
 
 class EdgePopulation(Population):
     class __IndexStruct(object):
@@ -351,7 +389,7 @@ class EdgePopulation(Population):
             self.lookup_table = lookup_table
             self.edge_table = edge_table
 
-    def __init__(self, pop_name, pop_group, edge_types_tables):
+    def __init__(self, pop_name, pop_group, edge_types_tables, metadata=None):
         super(EdgePopulation, self).__init__(pop_name=pop_name, pop_group=pop_group, types_table=edge_types_tables)
 
         # keep reference to source and target datasets
@@ -359,6 +397,8 @@ class EdgePopulation(Population):
         self._target_node_id_ds = pop_group['target_node_id']
 
         self._nrows = len(self._source_node_id_ds)
+        self._metadata = metadata or {}
+
 
         # TODO: Throw an error/warning if missing
         self._source_population = EdgePopulation.get_source_population(pop_group)
@@ -374,17 +414,17 @@ class EdgePopulation(Population):
         self._has_source_index = False
         self.build_indicies()
 
-    @property
-    def group_id_column(self):
-        return 'edge_group_id'
+    # @property
+    # def group_id_column(self):
+    #     return 'edge_group_id'
+
+    # @property
+    # def group_index_column(self):
+    #     return 'edge_group_index'
 
     @property
-    def group_index_column(self):
-        return 'edge_group_index'
-
-    @property
-    def type_ids_column(self):
-        return 'edge_type_id'
+    def ctype(self):
+        return 'edges'
 
     @property
     def source_population(self):
@@ -624,3 +664,25 @@ class EdgePopulation(Population):
 
     def next(self):
         return self.__next__()
+
+    def __repr__(self):
+        ret_str = '{\n'
+        ret_str += '  population name: {}\n'.format(self.name)
+        ret_str += '  source/target nodes: {} -> {}\n'.format(self.source_population, self.target_population)
+        ret_str += '  num of edges: {}\n'.format(len(self))
+        # ret_str += '  node_types_table: {}\n'.format(self.edge_types_table)
+        ret_str += '  class: {}\n'.format(self.__class__)
+        for k, v in self._metadata.items():
+            ret_str += '  {}: {}\n'.format(k, v)
+        ret_str += '}'
+        return ret_str
+
+
+def load_edges(name, edges_table, network_props_table=None, version='0.1'):
+    metadata = {}
+    if isinstance(edges_table, h5py.Group):
+        metadata['format'] = 'HDF5'
+        metadata['file'] = os.path.abspath(edges_table.file.filename)
+        metadata['location'] = edges_table.name
+
+    return EdgePopulation(name, edges_table, network_props_table, metadata)
