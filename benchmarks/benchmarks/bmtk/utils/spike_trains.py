@@ -31,6 +31,7 @@ class SpikesReader:
         for node_id in range(2000):
             node_spikes = spike_trains.get_times(node_id)
 
+    """
     def peakmem_readspikes_nwb_orig(self):
         self.__read_spikes_orig()
 
@@ -42,6 +43,7 @@ class SpikesReader:
 
     def time_readspikes_nwb(self):
         self.__read_spikes()
+    """
 
 
 class SpikesBuilder:
@@ -89,6 +91,7 @@ class SpikesBuilder:
         spike_trains.flush()
         # spike_trains.close()
 
+    """
     def time_create_spikes_file_orig(self):
         self.__spike_writer_orig()
 
@@ -100,4 +103,4 @@ class SpikesBuilder:
 
     def peakmem_create_spikes_file(self):
         self.__spike_writer()
-
+    """
