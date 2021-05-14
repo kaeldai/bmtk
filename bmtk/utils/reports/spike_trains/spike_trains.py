@@ -114,7 +114,7 @@ class PoissonSpikeGenerator(SpikeTrains):
     """
     max_spikes_per_node = 10000000
 
-    def __init__(self, population=None, seed=None, output_units='ms', **kwargs):
+    def __init__(self, population=None, seed=None, output_units='ms', dt=None, **kwargs):
         if population is not None and 'default_population' not in kwargs:
             kwargs['default_population'] = population
 
@@ -132,7 +132,9 @@ class PoissonSpikeGenerator(SpikeTrains):
         else:
             raise AttributeError('Unknown output_units value {}'.format(output_units))
 
-    def add(self, node_ids, firing_rate, population=None, times=(0.0, 1.0)):
+        self._dt = dt
+
+    def add(self, node_ids, firing_rate, population=None, times=(0.0, 1.0), dt=None):
         # TODO: Add refactory period
         if isinstance(node_ids, string_types):
             # if user passes in path to nodes.h5 file count number of nodes
@@ -162,10 +164,31 @@ class PoissonSpikeGenerator(SpikeTrains):
                 raise ValueError('Invalid start and stop times.')
 
         for node_id in node_ids:
+            # c_prev = -1.0
             c_time = tstart
             while True:
                 interval = -np.log(1.0 - np.random.uniform()) / fr
-                c_time += interval
+                if self._dt is not None:
+                    interval = np.max((np.round(np.true_divide(interval, self._dt)) * self._dt, self._dt))
+
+                # c_time += interval
+                c_time = np.around(c_time + interval, 5)
+                print(c_time, interval)
+                # if self._dt is not None:
+                #     c_time = np.round(np.true_divide(c_time, self._dt)) * self._dt
+                #     if c_time == c_prev:
+                #         print(c_time, c_time + self._dt)
+                #         c_time += self._dt
+                #         # print(c_time)
+                #         # print('HERE', c_time, c_prev)
+                #
+                # if c_time == c_prev:
+                #     print('HERE')
+                # c_prev = c_time
+
+                # print(c_time, np.true_divide(c_time, self._dt), np.ceil(np.true_divide(c_time, self._dt)) * self._dt)
+                # exit()
+                # print(c_time)
                 if c_time > tstop:
                     break
 
