@@ -91,8 +91,8 @@ def stimx_waveform_factory(waveform):
     if isinstance(waveform, string_types):
         # if waveform_conf is str or unicode assume to be name of file in stim_dir
         # waveform_conf = str(waveform_conf)   # make consistent
-        file_ext = os.path.splitext(waveform)
-        if file_ext == 'csv':
+        file_ext = os.path.splitext(waveform)[-1]
+        if file_ext == '.csv':
             return WaveformCustom(waveform)
 
         elif file_ext == 'json':
