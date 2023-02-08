@@ -33,7 +33,7 @@
       "node_set": "all",
       "module": "comsol",
       "waveform": "$STIM_DIR/waveform_custom.csv",
-      "comsol_file": "$STIM_DIR/COMSOL copy.txt"
+      "comsol_file": "$STIM_DIR/COMSOL.txt"
     }
   },
 
