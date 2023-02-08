@@ -1,4 +1,4 @@
-2023-02-08 15:07:36,533 [INFO] Created log file
-2023-02-08 15:07:36,611 [INFO] Building cells.
-2023-02-08 15:07:46,823 [INFO] Building recurrent connections
-2023-02-08 15:07:46,924 [ERROR] Can not parse input format Extracellular_Stim
+2023-02-08 15:10:18,896 [INFO] Created log file
+2023-02-08 15:10:18,962 [INFO] Building cells.
+2023-02-08 15:10:28,162 [INFO] Building recurrent connections
+2023-02-08 15:10:28,240 [ERROR] Can not parse input format Extracellular_Stim
