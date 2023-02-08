@@ -11,8 +11,17 @@ from bmtk.simulator.bionet.modules.xstim_waveforms import stimx_waveform_factory
 from bmtk.simulator.bionet.utils import rotation_matrix
 from bmtk.simulator.bionet.io_tools import io
 
-
 class ComsolMod(SimulatorMod):
+    """ 
+    __init__: Comsol file is loaded as pandas dataframe
+    and then used to set up nearest neighbour (NN) interpolation object to create interpolation map
+
+    initialise: An interpolation map is defined per cell of every segment and stored in dictionary self._NN 
+    The interpolation map maps (the center of) every segment to its NN. It is calculated once here and then used in every step. 
+
+    step: An interpolation map is used to point each segment to its NN and find the corresponding voltage value in the comsol df.
+
+    """
     def __init__(self, comsol_file, waveform=None, cells=None, set_nrn_mechanisms=True,
                  node_set=None):
 
