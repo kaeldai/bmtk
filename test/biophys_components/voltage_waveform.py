@@ -98,7 +98,7 @@ class CreateVoltageWaveform:
         # path = './' # 'path/to/csv/file'
         #name = 'waveform_custom.csv'
 
-        path = ('C://Users//nilsv//bmtk//sim1//biophys_components//stimulations')
+        path = ('biophys_components/stimulations')
         name = 'waveform_custom.csv'
 
         # Write the time and amplitude lists to the csv-file
