@@ -2,12 +2,12 @@
   "network": "./network_config.json",
   "run": {
     "tstop": 100.0,
-    "dt": 10,
+    "dt": 1,
     "dL": 20.0,
     "spike_threshold": -15,
     "nsteps_block": 100,
     "time_step": 1,
-    "current_amplitude": 50
+    "current_amplitude": 10
   },
   "target_simulator": "NEURON",
   "conditions": {
@@ -21,15 +21,14 @@
       "module": "xstim",
       "positions_file": "biophys_components/stimulations/50.csv",
       "mesh_files_dir": "biophys_components/stimulations",
-      "waveform": "biophys_components/stimulations/waveform_custom.csv",
-      "comsol_file": "biophys_components/stimulations/COMSOL.txt"
+      "waveform": "biophys_components/stimulations/waveform_custom.csv"
     }
   },
   "output": {
-    "log_file": "C:\\Users\\nilsv\\bmtk\\bmtk\\working_dir/outputs/output_xstim\\log.txt",
-    "output_dir": "C:\\Users\\nilsv\\bmtk\\bmtk\\working_dir/outputs/output_xstim",
-    "spikes_file": "C:\\Users\\nilsv\\bmtk\\bmtk\\working_dir/outputs/output_xstim\\spikes.h5",
-    "spikes_file_csv": "C:\\Users\\nilsv\\bmtk\\bmtk\\working_dir/outputs/output_xstim\\spikes.csv",
+    "log_file": "C:\\Users\\nilsv\\bmtk\\test/outputs/output_xstim\\log.txt",
+    "output_dir": "C:\\Users\\nilsv\\bmtk\\test/outputs/output_xstim",
+    "spikes_file": "C:\\Users\\nilsv\\bmtk\\test/outputs/output_xstim\\spikes.h5",
+    "spikes_file_csv": "C:\\Users\\nilsv\\bmtk\\test/outputs/output_xstim\\spikes.csv",
     "spikes_sort_order": "time"
   },
   "components": {
@@ -96,8 +95,8 @@
       "enabled": true
     }
   },
-  "config_path": "C:\\Users\\nilsv\\bmtk\\bmtk\\working_dir\\config_xstim.json",
-  "config_dir": "C:\\Users\\nilsv\\bmtk\\bmtk\\working_dir",
+  "config_path": "C:\\Users\\nilsv\\bmtk\\test\\config_xstim.json",
+  "config_dir": "C:\\Users\\nilsv\\bmtk\\test",
   "networks": {
     "nodes": [
       {

@@ -3,7 +3,7 @@
 
   "manifest": {
     "$BASE_DIR": "${configdir}",
-    "$OUTPUT_DIR": "$BASE_DIR/outputs/output_xstim",
+    "$OUTPUT_DIR": "$BASE_DIR/outputs/output_comsol",
     "$INPUT_DIR": "$BASE_DIR/../NWB_files",
     "$NETWORK_DIR": "$BASE_DIR/network",
     "$COMPONENT_DIR": "biophys_components",
@@ -17,7 +17,7 @@
     "spike_threshold": -15,
     "nsteps_block": 100,
     "time_step": 1,
-    "current_amplitude": 10
+    "current_amplitude": 50
   },
 
   "target_simulator":"NEURON",
@@ -31,10 +31,9 @@
     "Extracellular_Stim": {
       "input_type": "lfp",
       "node_set": "all",
-      "module": "xstim",
-      "positions_file": "$STIM_DIR/50.csv",
-      "mesh_files_dir": "$STIM_DIR",
-      "waveform": "$STIM_DIR/waveform_custom.csv"
+      "module": "comsol",
+      "waveform": "$STIM_DIR/waveform_custom.csv",
+      "comsol_file": "$STIM_DIR/COMSOL copy.txt"
     }
   },
 
