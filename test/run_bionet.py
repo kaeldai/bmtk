@@ -6,6 +6,8 @@ import numpy as np
 import json
 import os 
 
+sys.path.append('..')
+
 from bmtk.simulator import bionet
 from bmtk.analyzer.compartment import plot_traces
 from biophys_components.voltage_waveform import CreateVoltageWaveform
