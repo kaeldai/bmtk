@@ -1,11 +1,11 @@
 import pandas as pd
-from biophys_components.hdr5 import HDR5
+from biophys_components.hdf5 import HDRF
 import matplotlib.pyplot as plt
 import numpy as np
 import h5py as h5
 
 def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
-    node_pos = HDR5(nodes_dir).get_positions()
+    node_pos = HDF5(nodes_dir).get_positions()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
     elec_pos = elec_pos[['pos_x', 'pos_x', 'pos_x']].to_numpy()[0]
@@ -37,7 +37,7 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
 
 
 def plot_positions(nodes_dir, save_dir=None):
-    node_pos = HDR5(nodes_dir).get_positions()
+    node_pos = HDF5(nodes_dir).get_positions()
     labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
 
     fig = plt.figure(figsize=(9,12))
@@ -55,7 +55,7 @@ def plot_positions(nodes_dir, save_dir=None):
 
 
 def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None, legend=None):
-    node_pos = HDR5(nodes_dir).get_positions()
+    node_pos = HDF5(nodes_dir).get_positions()
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
     elec_pos = elec_pos[['pos_x', 'pos_x', 'pos_x']].to_numpy()[0]
 

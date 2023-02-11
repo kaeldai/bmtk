@@ -4,7 +4,7 @@ sys.path.append('..')
 
 from bmtk.builder import NetworkBuilder
 from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
-from biophys_components.hdr5 import HDR5
+from biophys_components.hdf5 import HDF5
 from bmtk.builder.auxi.edge_connectors import distance_connector
 
 np.random.seed(10)
@@ -43,6 +43,6 @@ slice.build()
 slice.save_nodes(output_dir='network')
 slice.save_edges(output_dir='network')
 
-# f = HDR5('network/slice_nodes.h5')
+# f = HDF5('network/slice_nodes.h5')
 # print(f.get_positions())
 # print(f.get_rotations())

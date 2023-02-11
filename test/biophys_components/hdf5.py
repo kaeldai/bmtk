@@ -3,7 +3,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-class HDR5:
+class HDF5:
 
     def __init__(self, dir, plot=False):
 
@@ -60,5 +60,5 @@ class HDR5:
         ax.set_zlabel('Z')
 
 
-nodes = HDR5('network/slice_nodes.h5')
+nodes = HDF5('network/slice_nodes.h5')
 nodes.plot_positions()
