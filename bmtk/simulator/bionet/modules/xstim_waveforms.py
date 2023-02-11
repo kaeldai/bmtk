@@ -95,7 +95,7 @@ def stimx_waveform_factory(waveform):
         if file_ext == '.csv':
             return WaveformCustom(waveform)
 
-        elif file_ext == 'json':
+        elif file_ext == '.json':
             with open(waveform, 'r') as f:
                 waveform = json.load(f)
         else:
