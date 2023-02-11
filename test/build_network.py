@@ -1,19 +1,21 @@
 import numpy as np
+import sys
+sys.path.append('..')
+
 from bmtk.builder import NetworkBuilder
 from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
 from biophys_components.hdr5 import HDR5
 from bmtk.builder.auxi.edge_connectors import distance_connector
 
-import numpy.random
-numpy.random.seed(10)
+np.random.seed(10)
 
-n_nodes = 100
+n_nodes = 200
 
 slice = NetworkBuilder('slice')
 slice.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, 0, 0], max_radius=300, height=150.0),
+    positions=positions_columinar(N=n_nodes, center=[0, -450, 0], min_radius = 1, max_radius=200, height=800),
     rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
@@ -30,7 +32,7 @@ slice.add_edges(
     connection_rule=distance_connector,
     connection_params={'d_weight_min': 0.0, 'd_weight_max': 0.34, 'd_max': 50.0, 'nsyn_min': 0, 'nsyn_max': 10},
     syn_weight=2.0e-04,
-    distance_range=[30.0, 150.0],
+    distance_range=[30.0, 300.0],
     target_sections=['basal', 'apical', 'soma'],
     delay=2.0,
     dynamics_params='AMPA_ExcToExc.json',
