@@ -22,7 +22,7 @@ def run(config_file):
     with open (config_file, "r") as f:
         parameters = json.load(f)
 
-    time_step = parameters["run"]["time_step"]
+    time_step = parameters["run"]["dt"]
     currentamplitude = parameters["run"]["current_amplitude"]
 
     print("time_step =", time_step)
