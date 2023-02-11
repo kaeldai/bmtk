@@ -8,8 +8,6 @@ from neuron import h
 from scipy.interpolate import NearestNDInterpolator as NNip
 from bmtk.simulator.bionet.modules.sim_module import SimulatorMod
 from bmtk.simulator.bionet.modules.xstim_waveforms import stimx_waveform_factory
-from bmtk.simulator.bionet.utils import rotation_matrix
-from bmtk.simulator.bionet.io_tools import io
 
 class ComsolMod(SimulatorMod):
     """ 
@@ -26,7 +24,8 @@ class ComsolMod(SimulatorMod):
                  node_set=None):
 
         if waveform is not None:
-            self._waveform = waveform  # TODO: Check if waveform is a file or dict and load it appropiately
+            self._waveform = stimx_waveform_factory(waveform)
+
 
         self._comsol_file = comsol_file
         self._comsol = pd.read_csv(comsol_file, sep="\s+", header=8, usecols=[0,1,2,3], names=['x','y','z','V'])
@@ -68,5 +67,5 @@ class ComsolMod(SimulatorMod):
         for gid in self._local_gids:
             cell = sim.net.get_cell_gid(gid)
             NN = self._NN[gid]
-            v_ext = self._comsol['V'].iloc[NN].to_numpy()
+            v_ext = 1000*self._waveform.calculate(tstep+1)*self._comsol['V'].iloc[NN].to_numpy()
             cell.set_e_extracellular(h.Vector(v_ext))
