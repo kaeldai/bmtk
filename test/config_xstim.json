@@ -16,7 +16,6 @@
     "dL": 20.0,
     "spike_threshold": -15,
     "nsteps_block": 100,
-    "time_step": 1,
     "current_amplitude": 10
   },
 

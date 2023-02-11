@@ -1,12 +1,11 @@
 {
   "network": "./network_config.json",
   "run": {
-    "tstop": 100.0,
-    "dt": 1,
+    "tstop": 500.0,
+    "dt": 5,
     "dL": 20.0,
     "spike_threshold": -15,
-    "nsteps_block": 100,
-    "time_step": 1,
+    "nsteps_block": 10,
     "current_amplitude": 50
   },
   "target_simulator": "NEURON",
