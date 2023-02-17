@@ -60,5 +60,5 @@ class HDF5:
         ax.set_zlabel('Z')
 
 
-nodes = HDF5('network/slice_nodes.h5')
-nodes.plot_positions()
+# nodes = HDF5('network/slice_nodes.h5')
+# nodes.plot_positions()

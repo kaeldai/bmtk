@@ -11,7 +11,7 @@
   },
 
   "run": {
-    "tstop": 500.0,
+    "tstop": 100.0,
     "dt": 0.1,
     "dL": 20.0,
     "spike_threshold": -15,
@@ -31,7 +31,6 @@
       "input_type": "lfp",
       "node_set": "all",
       "module": "comsol",
-      "waveform": "$STIM_DIR/waveform_custom.csv",
       "comsol_file": "$STIM_DIR/COMSOL.txt"
     }
   },

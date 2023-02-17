@@ -1,11 +1,11 @@
 {
-  "network": "./network_config.json",
+  "network": "./config_network.json",
   "run": {
-    "tstop": 500.0,
-    "dt": 0.02,
+    "tstop": 1.0,
+    "dt": 0.1,
     "dL": 20.0,
     "spike_threshold": -15,
-    "nsteps_block": 5000,
+    "nsteps_block": 1000,
     "current_amplitude": 50
   },
   "target_simulator": "NEURON",
@@ -18,7 +18,6 @@
       "input_type": "lfp",
       "node_set": "all",
       "module": "comsol",
-      "waveform": "biophys_components/stimulations/waveform_custom.csv",
       "comsol_file": "biophys_components/stimulations/COMSOL.txt"
     }
   },

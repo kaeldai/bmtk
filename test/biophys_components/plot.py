@@ -1,5 +1,5 @@
 import pandas as pd
-from biophys_components.hdf5 import HDRF
+from hdf5 import HDF5
 import matplotlib.pyplot as plt
 import numpy as np
 import h5py as h5
@@ -111,12 +111,14 @@ def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None
 #     save_dir = 'figures/3d_20',
 # )
 
-plot_activity_3d(
-    nodes_dir = 'network/slice_nodes.h5',
-    electrodes_dir = 'biophys_components/stimulations/50.csv',
-    spikes_dir = 'outputs/output_comsol/spikes.csv',
-    save_dir = None,
-)
+# plot_activity_3d(
+#     nodes_dir = '../network/slice_nodes.h5',
+#     electrodes_dir = 'stimulations/50.csv',
+#     spikes_dir = '../outputs/output_comsol/spikes.csv',
+#     save_dir = None,
+# )
+
+plot_positions(nodes_dir = './network/slice_nodes.h5')
 
 # plot_positions('network/slice_nodes.h5')
 
