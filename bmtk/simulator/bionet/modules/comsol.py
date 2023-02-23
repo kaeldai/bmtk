@@ -37,8 +37,14 @@ class ComsolMod(SimulatorMod):
             self._waveform = None
         
         self._comsol_file = comsol_file
-        self._comsol = pd.read_csv(comsol_file, sep="\s+", header=8, usecols=[0,1,2,3], names=['x','y','z','V'])
-        self._NNip = NNip(self._comsol[['x','y','z']], np.arange(len(self._comsol['V'])))
+        header = pd.read_csv(comsol_file, sep="\s{3,}", header=None, skiprows=8, nrows=1, engine='python').to_numpy()[0]
+        header[0] = header[0][2:]                       # remove '% ' before first column name
+        for i,col in enumerate(header):                 # remove characters before actual time value
+            if col[0] == "V":
+                header[i] = float(col[10:])
+        self._timepoints = np.array(header[3:], dtype=float)
+        self._comsol = pd.read_csv(comsol_file, sep="\s+", header=None, skiprows=9, names=header)
+        self._NNip = NNip(self._comsol[['x','y','z']], np.arange(len(self._comsol['x'])))
         self._NN = {}
 
         self._set_nrn_mechanisms = set_nrn_mechanisms
@@ -60,13 +66,22 @@ class ComsolMod(SimulatorMod):
             r05 = cell.seg_coords.p05
             self._NN[gid] = self._NNip(r05.T)
 
+        dt = sim.dt
+
+        tsteps = np.arange(self._timepoints[0], self._timepoints[-1]+dt, dt/1000)
+
+        self._arr = np.zeros((self._comsol.shape[0],len(tsteps)))
+
+        for i in range(self._comsol.shape[0]):
+            self._arr[i,:] = np.interp(tsteps, self._timepoints, self._comsol.iloc[i,3:]).flatten()
+        
 
     def step(self, sim, tstep):
         for gid in self._local_gids:
             cell = sim.net.get_cell_gid(gid)
             NN = self._NN[gid]
+            v_ext = 2000*self._arr[NN,tstep+1]
+
             if self._waveform is not None:
-                v_ext = 1000*self._waveform.calculate(tstep+1)*self._comsol['V'].iloc[NN].to_numpy()
-            else:
-                v_ext = 1000*self._comsol['V'].iloc[NN].to_numpy()
+                v_ext *= self._waveform.calculate(tstep+1)                
             cell.set_e_extracellular(h.Vector(v_ext))
