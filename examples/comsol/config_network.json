@@ -14,15 +14,15 @@
   "networks": {
     "nodes": [
       {
-        "nodes_file": "$NETWORK_DIR/slice_nodes.h5",
-        "node_types_file": "$NETWORK_DIR/slice_node_types.csv"
+        "nodes_file": "$NETWORK_DIR/column_nodes.h5",
+        "node_types_file": "$NETWORK_DIR/column_node_types.csv"
       }
     ],
 
     "edges": [
       {
-        "edges_file": "$NETWORK_DIR/slice_slice_edges.h5",
-        "edge_types_file": "$NETWORK_DIR/slice_slice_edge_types.csv"
+        "edges_file": "$NETWORK_DIR/column_column_edges.h5",
+        "edge_types_file": "$NETWORK_DIR/column_column_edge_types.csv"
       }
     ]
   }
