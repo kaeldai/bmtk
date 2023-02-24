@@ -8,7 +8,7 @@ Uses the BioNet simulator (requires NEURON)
 ## Running:
 
 ```
-$ python run_bionet.py config.simulation.json
+$ python run_bionet.py config_comsol.json
 ```
 If successful, will create a *output* directory containing log, spike trains and recorded cell variables.
 
