@@ -10,10 +10,10 @@ from bmtk.builder.auxi.edge_connectors import distance_connector
 
 np.random.seed(10)
 
-n_nodes = 200
+n_nodes = 100
 
-slice = NetworkBuilder('slice')
-slice.add_nodes(
+column = NetworkBuilder('column')
+column.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
     positions=positions_columinar(N=n_nodes, center=[0, -450, 0], min_radius = 1, max_radius=200, height=800),
@@ -28,7 +28,7 @@ slice.add_nodes(
     morphology='Scnn1a_473845048_m.swc'
 )
 
-slice.add_edges(
+column.add_edges(
     source={'pop_name': 'Scnn1a'}, target={'pop_name': 'Scnn1a'},
     connection_rule=distance_connector,
     connection_params={'d_weight_min': 0.0, 'd_weight_max': 0.34, 'd_max': 50.0, 'nsyn_min': 0, 'nsyn_max': 10},
@@ -40,10 +40,6 @@ slice.add_edges(
     model_template='exp2syn'
 )
 
-slice.build()
-slice.save_nodes(output_dir='network')
-slice.save_edges(output_dir='network')
-
-# f = HDF5('network/slice_nodes.h5')
-# print(f.get_positions())
-# print(f.get_rotations())
+column.build()
+column.save_nodes(output_dir='network')
+column.save_edges(output_dir='network')

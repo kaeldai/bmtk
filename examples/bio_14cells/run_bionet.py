@@ -1,8 +1,8 @@
 """Simulates an example network of 450 cell receiving two kinds of exernal input as defined in the configuration file"""
 import os
 import sys
+sys.path.append('../..')
 from bmtk.simulator import bionet
-
 
 def run(config_path):
     conf = bionet.Config.from_json(config_path, validate=True)

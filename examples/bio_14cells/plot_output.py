@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
+import sys
+sys.path.append('../..')
+
 from bmtk.analyzer.spike_trains import plot_raster, plot_rates
 from bmtk.analyzer.compartment import plot_traces
-
 
 plot_raster(config_file='config.simulation.json', group_by='pop_name', show=False)
 plot_rates(config_file='config.simulation.json', show=False)
