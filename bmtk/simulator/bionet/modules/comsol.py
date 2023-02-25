@@ -38,7 +38,7 @@ class ComsolMod(SimulatorMod):
         header[0] = header[0][2:]                               # remove '% ' before first column name
         for i,col in enumerate(header):                         # remove superfluous characters before actual time value
             if col[0] == "V":
-                header[i] = float(col[10:])
+                header[i] = float(col[11:])
         self._timepoints = np.array(header[3:], dtype=float)    # create array of timepoints  
 
         # load actual values in COMSOL output .txt file.  
@@ -79,7 +79,8 @@ class ComsolMod(SimulatorMod):
         for gid in self._local_gids:
             cell = sim.net.get_cell_gid(gid)        # get cell gid
             NN = self._NN[gid]                      # vector that points each node of the cell to its nearest neighbour in the .txt file
-            v_ext = self._arr[NN,tstep+1]           # assign extracellular potential value of NN at tstep
+            tstep = tstep % 200
+            v_ext = 10*self._arr[NN,tstep+1]           # assign extracellular potential value of NN at tstep
 
             # TO DO: add possibility to specify time dependency in bmtk rather than COMSOL?
             # if self._waveform is not None:
