@@ -15,8 +15,7 @@
     "dt": 0.025,
     "dL": 20.0,
     "spike_threshold": -15,
-    "nsteps_block": 400,
-    "current_amplitude": 50
+    "nsteps_block": 400
   },
 
   "target_simulator":"NEURON",

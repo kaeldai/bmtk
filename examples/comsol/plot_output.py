@@ -1,15 +1,20 @@
 import matplotlib.pyplot as plt
 import sys
+sys.path.append('../../..')
 sys.path.append('../..')
+sys.path.append('..')
+sys.path.append('../bio_components')
 from bmtk.analyzer.compartment import plot_traces
 from bmtk.analyzer.spike_trains import plot_raster, plot_rates_boxplot
+import bio_components.plot as bioplot
 
-config_file = 'config_comsol.json'
+
+config_file = 'config_comsol_0_0.json'
 # config_file = 'config.simulation_vm.json'
 # config_file = 'config.simulation_ecp.json'
 
 # Setting show to False so we can display all the plots at the same time
-plot_raster(config_file=config_file, show=False) # , group_by='model_name', show=False)
+# plot_raster(config_file=config_file, show=False) # , group_by='model_name', show=False)
 # plot_rates_boxplot(config_file=config_file, group_by='model_name', show=False)
 # if config_file == 'config.simulation_vm.json':
 #     plot_traces(
@@ -18,3 +23,10 @@ plot_raster(config_file=config_file, show=False) # , group_by='model_name', show
 #     )
 
 plt.show()
+
+bioplot.plot_activity_3d(
+    nodes_dir = 'network/column_nodes.h5',
+    electrodes_dir = '../bio_components/stimulations/400_400.csv',
+    spikes_dir = 'outputs/output_400_400/spikes.csv',
+    save_dir = 'figures/3d_50',
+)
