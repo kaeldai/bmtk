@@ -42,3 +42,4 @@ lib64
 pip-selfcheck.json
 pyvenv.cfg
 .gitignore
+examples/v1
