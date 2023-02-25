@@ -1,0 +1,382 @@
+numprocs=12
+NEURON -- VERSION 8.1.0 HEAD (047dd824) 2022-03-25
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2021
+See http://neuron.yale.edu/neuron/credits
+
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+usage: nrniv [-h] [-o OUTPUT_DIR] [--debug] [--log-file LOG_FILE]
+             [--rng-seed RNG_SEED] [--fraction FRACTION]
+nrniv: error: unrecognized arguments: -mpi -python build_network.py
+-------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code.. Per user-direction, the job has been aborted.
+-------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[15676,1],5]
+  Exit code:    2
+--------------------------------------------------------------------------
+numprocs=12
+NEURON -- VERSION 8.1.0 HEAD (047dd824) 2022-03-25
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2021
+See http://neuron.yale.edu/neuron/credits
+
+2023-02-24 16:34:59,802 [INFO] Created log file
+2023-02-24 16:34:59,808 [INFO] Running NEURON with mpi (12 cores).
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+NEURON mechanisms not found in ./components/mechanisms.
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+Traceback (most recent call last):
+  File "run_bionet.py", line 131, in <module>
+    run(config_file, **usr_vars)
+  File "run_bionet.py", line 67, in run
+    graph = bionet.BioNetwork.from_config(conf)
+  File "../../bmtk/simulator/core/simulator_network.py", line 242, in from_config
+    adaptor=node_adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 13, in load_nodes
+    return SonataNodes.load(nodes_h5, node_types_csv, gid_table, selected_nodes, adaptor)
+  File "../../bmtk/simulator/core/sonata_reader/network_reader.py", line 122, in load
+    sonata_file = sonata.File(data_files=nodes_h5, data_type_files=node_types_csv, gid_table=gid_table)
+  File "../../bmtk/utils/sonata/file.py", line 36, in __init__
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/file.py", line 36, in <listcomp>
+    self._h5_file_handles = [utils.load_h5(f, mode) for f in self._data_files]
+  File "../../bmtk/utils/sonata/utils.py", line 58, in load_h5
+    return h5py.File(h5file, mode)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 427, in __init__
+    swmr=swmr)
+  File "/users/students/r0754386/Documents/bmtk/lib64/python3.6/site-packages/h5py/_hl/files.py", line 190, in make_fid
+    fid = h5f.open(name, flags, fapl=fapl)
+  File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper
+  File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper
+  File "h5py/h5f.pyx", line 96, in h5py.h5f.open
+OSError: Unable to open file (unable to open file: name = './network/v1_nodes.h5', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)
+-------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code.. Per user-direction, the job has been aborted.
+-------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[15697,1],7]
+  Exit code:    1
+--------------------------------------------------------------------------
