@@ -3,7 +3,7 @@
 
   "manifest": {
     "$BASE_DIR": ".",
-    "$OUTPUT_DIR": "$BASE_DIR/outputs/output_400_400",
+    "$OUTPUT_DIR": "$BASE_DIR/outputs/output_0_0",
     "$INPUT_DIR": "$BASE_DIR/../NWB_files",
     "$NETWORK_DIR": "$BASE_DIR/network",
     "$COMPONENT_DIR": "$BASE_DIR/../bio_components",
@@ -31,7 +31,7 @@
       "input_type": "lfp",
       "node_set": "all",
       "module": "comsol",
-      "comsol_file": "$STIM_DIR/COMSOL_400_400.txt"
+      "comsol_file": "$STIM_DIR/COMSOL_0_0.txt"
     }
   },
 

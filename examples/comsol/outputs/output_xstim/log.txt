@@ -1,0 +1,2 @@
+2023-02-20 18:54:29,298 [INFO] Created log file
+2023-02-20 18:54:29,381 [ERROR] Could not find edge dynamics_params file /../bio_components/synaptic_models\AMPA_ExcToExc.json.

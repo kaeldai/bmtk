@@ -47,3 +47,4 @@ examples/v1/network_rebuilt
 examples/v1/output
 examples/v1/output_comsol
 examples/**/figures
+!examples/comsol/output*/**
