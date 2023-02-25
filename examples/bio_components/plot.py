@@ -8,7 +8,7 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
     node_pos = HDF5(nodes_dir).get_positions()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-    elec_pos = elec_pos[['pos_x', 'pos_x', 'pos_x']].to_numpy()[0]
+    elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
     spikes = pd.read_csv(spikes_dir, sep=' ')
     labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
@@ -29,7 +29,7 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
     ax.legend(loc='center', bbox_to_anchor=(1, 0.5))
-    cbar = plt.colorbar(p, label='# spikes [-]', shrink=0.5, location='bottom', pad=-0.1)
+    cbar = plt.colorbar(p, label='# spikes [-]', shrink=0.5, pad=-0.1)
     cbar.set_ticks(range(1,int(max(n_spikes))+1))
     if save_dir is not None:
         plt.savefig(save_dir, bbox_inches='tight', transparent=True)
@@ -118,7 +118,7 @@ def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None
 #     save_dir = None,
 # )
 
-plot_positions(nodes_dir = './network/slice_nodes.h5')
+# plot_positions(nodes_dir = '../comsol/network/column_nodes.h5')
 
 # plot_positions('network/slice_nodes.h5')
 
@@ -140,3 +140,11 @@ plot_positions(nodes_dir = './network/slice_nodes.h5')
 # ax.set_zlabel(labels[2])
 # ax.legend(loc='center', bbox_to_anchor=(1, 0.5))
 # plt.show()
+
+
+plot_activity_3d(
+    nodes_dir = '../comsol/network/column_nodes.h5',
+    electrodes_dir = './stimulations/elec_comsol.csv',
+    spikes_dir = '../comsol/output/spikes.csv',
+    save_dir = '../comsol/figures/3d_50',
+)
