@@ -1,4 +1,4 @@
-"""Simulates an example network of 450 cell receiving two kinds of exernal input as defined in the configuration file"""
+"""Simulates an example network of 100 cells receiving two kinds of exernal input as defined in the configuration file"""
 import sys
 import matplotlib.pyplot as plt
 import h5py
@@ -13,6 +13,9 @@ from bmtk.simulator import bionet
 from bmtk.analyzer.compartment import plot_traces
 from bio_components.voltage_waveform import CreateVoltageWaveform
     
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+MPI_RANK = comm.Get_rank()
 
 def show_cell_var(conf, var_name):
     plot_traces(config_file=conf, report_name=var_name)
