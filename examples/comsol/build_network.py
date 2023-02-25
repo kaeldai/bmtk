@@ -21,7 +21,7 @@ column = NetworkBuilder('column')
 column.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, -450, 0], min_radius = 1, max_radius=200, height=800),
+    positions=positions_columinar(N=n_nodes, center=[0, -450, 0], min_radius = 1, max_radius=845, height=800, plot=True),
     rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
@@ -38,7 +38,7 @@ column.add_edges(
     connection_rule=distance_connector,
     connection_params={'d_weight_min': 0.0, 'd_weight_max': 0.34, 'd_max': 50.0, 'nsyn_min': 0, 'nsyn_max': 10},
     syn_weight=2.0e-04,
-    distance_range=[30.0, 300.0],
+    distance_range=[15.0, 150.0],
     target_sections=['basal', 'apical', 'soma'],
     delay=2.0,
     dynamics_params='AMPA_ExcToExc.json',

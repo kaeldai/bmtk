@@ -1,7 +1,7 @@
 {
   "network": "./config_network.json",
   "run": {
-    "tstop": 100.0,
+    "tstop": 50.0,
     "dt": 0.025,
     "dL": 20.0,
     "spike_threshold": -15,
