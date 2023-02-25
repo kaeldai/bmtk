@@ -1,2 +1,2 @@
-node_type_id model_processing model_template potental dynamics_params morphology model_type pop_name
-100 aibs_perisomatic ctdb:Biophys1.hoc exc 472363762_fit.json Scnn1a_473845048_m.swc biophysical Scnn1a
+node_type_id model_template model_processing dynamics_params morphology potental pop_name model_type
+100 ctdb:Biophys1.hoc aibs_perisomatic 472363762_fit.json Scnn1a_473845048_m.swc exc Scnn1a biophysical

@@ -23,17 +23,17 @@ def show_cell_var(conf, var_name):
 
 def run(config_file):
 
-    with open (config_file, "r") as f:
-        parameters = json.load(f)
+    # with open (config_file, "r") as f:
+    #     parameters = json.load(f)
 
-    time_step = parameters["run"]["dt"]
-    currentamplitude = parameters["run"]["current_amplitude"]
+    # time_step = parameters["run"]["dt"]
+    # currentamplitude = parameters["run"]["current_amplitude"]
 
-    print("time_step =", time_step)
-    print("current_amplitude =", currentamplitude)
+    # print("time_step =", time_step)
+    # print("current_amplitude =", currentamplitude)
 
-    #creates the file xstim
-    CreateVoltageWaveform(current_amplitude=currentamplitude, timestep=time_step, plotting=False) 
+    # #creates the file xstim
+    # CreateVoltageWaveform(current_amplitude=currentamplitude, timestep=time_step, plotting=False) 
 
     conf = bionet.Config.from_json(config_file, validate=True)
     conf.build_env()
@@ -42,7 +42,7 @@ def run(config_file):
     sim = bionet.BioSimulator.from_config(conf, network=graph)
     sim.run()
 
-    show_cell_var(config_file, 'membrane_potential')
+    # show_cell_var(config_file, 'membrane_potential')
 
 
 if __name__ == '__main__':

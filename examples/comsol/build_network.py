@@ -8,9 +8,14 @@ from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
 from bio_components.hdf5 import HDF5
 from bmtk.builder.auxi.edge_connectors import distance_connector
 
-np.random.seed(10)
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
 
-n_nodes = 100
+import logging
+logger = logging.getLogger(__name__)
+
+np.random.seed(10)
+n_nodes = 1000
 
 column = NetworkBuilder('column')
 column.add_nodes(
