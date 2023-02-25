@@ -17,7 +17,7 @@ except ImportError:
     barrier = lambda: None
 
 
-MPI_fail_params_nonuniform = True  # throw exception unless params across MPI ranks are the same.
+MPI_fail_params_nonuniform = False  # throw exception unless params across MPI ranks are the same.
 logger = logging.getLogger(__name__)
 
 
@@ -107,6 +107,6 @@ def check_properties_across_ranks(properties, graph_type='node'):
             err_msg = '{} property "{}" varies across ranks, please make sure parameter value is uniform across all' \
                       'ranks or set bmtk.builder.MPI_fail_params_nonuniform to False'.format(graph_type, pkey)
             if not MPI_fail_params_nonuniform:
-                logger.warning(err_msg)
+                logger.warning(err_msg)         
             else:
-                raise TypeError(err_msg)
+                raise TypeError(err_msg)   
