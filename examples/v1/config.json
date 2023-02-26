@@ -1,7 +1,7 @@
 {
   "manifest": {
     "$BASE_DIR": ".",
-    "$OUTPUT_DIR": "$BASE_DIR/output",
+    "$OUTPUT_DIR": "$BASE_DIR/output/noLGN",
     "$BKG_DIR": "$BASE_DIR/components",
     "$LGN_DIR": "$BASE_DIR/components",
     "$NETWORK_DIR": "$BASE_DIR/networks_rebuilt/network",
@@ -10,7 +10,7 @@
   },
 
   "run": {
-    "tstop": 30.0,
+    "tstop": 50.0,
     "dt": 0.025,
     "dL": 20.0,
     "spike_threshold": -15,

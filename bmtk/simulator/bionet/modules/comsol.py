@@ -80,7 +80,7 @@ class ComsolMod(SimulatorMod):
             cell = sim.net.get_cell_gid(gid)        # get cell gid
             NN = self._NN[gid]                      # vector that points each node of the cell to its nearest neighbour in the .txt file
             tstep = tstep % 200
-            v_ext = 10*self._arr[NN,tstep+1]           # assign extracellular potential value of NN at tstep
+            v_ext = self._arr[NN,tstep+1]           # assign extracellular potential value of NN at tstep
 
             # TO DO: add possibility to specify time dependency in bmtk rather than COMSOL?
             # if self._waveform is not None:
