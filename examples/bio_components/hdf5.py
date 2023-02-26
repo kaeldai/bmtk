@@ -9,7 +9,7 @@ class HDF5:
 
         self.dir = dir
         self.file = h5py.File(self.dir, 'r')
-        self.get_positions()
+        self.get_positions_v1()
         self.get_rotations()
         if plot:
             self.plot_positions(labels=['X','Z','Y'])
@@ -24,6 +24,18 @@ class HDF5:
         self.y_pos = self.positions[:,2]
 
         return self.positions[:,:]
+
+    def get_positions_v1(self):
+
+        self.name = os.path.split(self.dir)[1][:-9]
+
+        self.x_pos = np.array(self.file['nodes'][self.name]['0']['x'][:])
+        self.z_pos = np.array(self.file['nodes'][self.name]['0']['z'][:])
+        self.y_pos = np.array(self.file['nodes'][self.name]['0']['y'][:])
+
+        self.positions = np.vstack((self.x_pos, self.y_pos, self.z_pos)).T
+
+        return self.positions
 
     def get_rotations(self):
 
@@ -60,5 +72,5 @@ class HDF5:
         ax.set_zlabel('Z')
 
 
-# nodes = HDF5('network/slice_nodes.h5')
-# nodes.plot_positions()
+# nodes = HDF5('/users/students/r0754386/Documents/bmtk/examples/v1/networks_rebuilt/network/v1_nodes.h5')
+# print(nodes.get_positions_v1())

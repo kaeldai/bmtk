@@ -6,7 +6,7 @@
     "$LGN_DIR": "$BASE_DIR/components",
     "$NETWORK_DIR": "$BASE_DIR/networks_rebuilt/network",
     "$COMPONENT_DIR": "$BASE_DIR/components",
-    "$STIM_DIR": "$COMPONENT_DIR/stimulation"
+    "$STIM_DIR": "$BASE_DIR/../bio_components/stimulations"
   },
 
   "run": {

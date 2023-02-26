@@ -5,12 +5,13 @@ import numpy as np
 import h5py as h5
 
 def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
-    node_pos = HDF5(nodes_dir).get_positions()
+    node_pos = HDF5(nodes_dir).get_positions_v1()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
+    elec_pos['pos_y'] = elec_pos['pos_y'] + 800 # TEMPORARY
     elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
-    spikes = pd.read_csv(spikes_dir, sep=' ')
+    spikes = pd.read_csv(spikes_dir, sep='\s+')
     labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
     for ind in spikes.index:
         n_spikes[spikes['node_ids'][ind]] += 1
@@ -124,15 +125,15 @@ def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None
 
 
 ### PLOT V1 MOUSE MODEL 
-# v1 = h5.File('v1_nodes.h5')['nodes']['v1']['0']
+# v1 = h5.File('/users/students/r0754386/Documents/bmtk/examples/v1/network/v1_nodes.h5')['nodes']['v1']['0']
 # x_pos = v1['x']
 # y_pos = v1['y']
 # z_pos = v1['z']
 # labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
-
+#
 # fig = plt.figure(figsize=(9,12))
 # ax = plt.axes(projection="3d")
-
+#
 # p = ax.scatter(x_pos, y_pos, z_pos, marker='o', s=20)
 # ax.view_init(elev=5., azim=0)
 # ax.set_xlabel(labels[0])
