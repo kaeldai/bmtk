@@ -136,9 +136,8 @@ according to the mapping bio2lif_mapping.csv
 
  ### Information
 
- networks_rebuilt contains network only including 0.01 fraction of neurons.
+ networks_rebuilt contains network only including 0.10 fraction of neurons.
  The y-component represents the axial direction of the column, representing L1->6 with increasing y
-
 
 
 ssh -J r0754386@ssh.esat.kuleuven.be r0754386@eridani2.esat.kuleuven.be
