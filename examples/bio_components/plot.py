@@ -8,7 +8,6 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
     node_pos = HDF5(nodes_dir).get_positions_v1()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-    elec_pos['pos_y'] = elec_pos['pos_y'] + 800 # TEMPORARY
     elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
     spikes = pd.read_csv(spikes_dir, sep='\s+')

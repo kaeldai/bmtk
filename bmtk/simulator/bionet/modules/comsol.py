@@ -43,7 +43,6 @@ class ComsolMod(SimulatorMod):
 
         # load actual values in COMSOL output .txt file.  
         self._comsol = pd.read_csv(comsol_file, sep="\s+", header=None, skiprows=9, names=header)       # load data from .txt file
-        self._comsol['y'] += self._comsol['y'] + 800                                                    # temporary fix
         self._NNip = NNip(self._comsol[['x','y','z']], np.arange(len(self._comsol['x'])))               # create scipy NN interpolation object 
         self._NN = {}                                           # initialise empty dictionary that will contain NN map of each cell
 
