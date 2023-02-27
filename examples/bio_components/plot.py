@@ -7,8 +7,6 @@ import h5py as h5
 def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False):
     node_pos = HDF5(nodes_dir).get_positions_v1()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
-    elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-    elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
     spikes = pd.read_csv(spikes_dir, sep='\s+')
     labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
@@ -23,7 +21,10 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
 
     p = ax.scatter(active[:,0], active[:,1], active[:,2], marker='o', s=20, cmap='cool', c=n_spikes[n_spikes!=0], label='activated neuron')
     ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.2', alpha=0.05, label='non-activated neuron')
-    ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
+    if electrodes_dir is not None:
+        elec_pos = pd.read_csv(electrodes_dir, sep=' ')
+        elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
+        ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
     ax.view_init(elev=5., azim=0)
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
@@ -69,9 +70,9 @@ def plot_positions(nodes_dir, save_dir=None):
 
 
 def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None, legend=None):
-    node_pos = HDF5(nodes_dir).get_positions()
+    node_pos = HDF5(nodes_dir).get_positions_v1()
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-    elec_pos = elec_pos[['pos_x', 'pos_x', 'pos_x']].to_numpy()[0]
+    elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
     r = np.zeros(np.size(node_pos, axis=0))
     for i in range(np.size(r)):
@@ -79,11 +80,11 @@ def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None
 
     fig = plt.figure()
     for spikes_dir in spikes_dirs:
-        spikes = pd.read_csv(spikes_dir, sep=' ')
+        spikes = pd.read_csv(spikes_dir, sep='\s+')
         n_spikes = np.zeros((np.shape(node_pos)[0]))
         for ind in spikes.index:
             n_spikes[spikes['node_ids'][ind]] += 1
-        plt.scatter(r, n_spikes, s=20, marker='o')
+        plt.scatter(r[n_spikes!=0], n_spikes[n_spikes!=0], s=20, marker='o')
     
     plt.xlabel('distance to electrode [$\mu m$]')
     plt.ylabel('# spikes [-]')
