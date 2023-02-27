@@ -1,7 +1,7 @@
 {
   "manifest": {
     "$BASE_DIR": ".",
-    "$OUTPUT_DIR": "$BASE_DIR/output_comsol/-400_400",
+    "$OUTPUT_DIR": "$BASE_DIR/output_comsol/200",
     "$BKG_DIR": "$BASE_DIR/components",
     "$LGN_DIR": "$BASE_DIR/components",
     "$NETWORK_DIR": "$BASE_DIR/networks_rebuilt/network",
@@ -42,7 +42,7 @@
       "input_type": "lfp",
       "node_set": "all",
       "module": "comsol",
-      "comsol_file": "$STIM_DIR/COMSOL_-400_400.txt"
+      "comsol_file": "$STIM_DIR/COMSOL_200.txt"
     }
   },
 

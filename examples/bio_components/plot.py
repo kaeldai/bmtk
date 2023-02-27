@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import h5py as h5
 
-def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
+def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False):
     node_pos = HDF5(nodes_dir).get_positions_v1()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
@@ -22,13 +22,27 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
     inactive = node_pos[n_spikes==0,:]
 
     p = ax.scatter(active[:,0], active[:,1], active[:,2], marker='o', s=20, cmap='cool', c=n_spikes[n_spikes!=0], label='activated neuron')
-    # ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.5', label='non-activated neuron')
+    ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.2', alpha=0.05, label='non-activated neuron')
     ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
     ax.view_init(elev=5., azim=0)
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
     ax.legend(loc='center', bbox_to_anchor=(1, 0.5))
+
+    if square_axis:
+        # Create cubic bounding box to simulate equal aspect ratio
+        X = node_pos[:,0]
+        Y = node_pos[:,1]
+        Z = node_pos[:,2]
+        max_range = np.array([X.max()-X.min(), Y.max()-Y.min(), Z.max()-Z.min()]).max()
+        Xb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][0].flatten() + 0.5*(X.max()+X.min())
+        Yb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][1].flatten() + 0.5*(Y.max()+Y.min())
+        Zb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][2].flatten() + 0.5*(Z.max()+Z.min())
+        # Comment or uncomment following both lines to test the fake bounding box:
+        for xb, yb, zb in zip(Xb, Yb, Zb):
+            ax.plot([xb], [yb], [zb], 'w')
+
     cbar = plt.colorbar(p, label='# spikes [-]', shrink=0.5, pad=-0.1)
     cbar.set_ticks(range(1,int(max(n_spikes))+1))
     if save_dir is not None:
