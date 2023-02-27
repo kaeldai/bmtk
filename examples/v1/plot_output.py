@@ -25,5 +25,5 @@ config_file = 'config.json'
 plot_activity_3d(
     nodes_dir = 'networks_rebuilt/network/v1_nodes.h5',
     electrodes_dir = '../bio_components/stimulations/0_0.csv',
-    spikes_dir = 'output_comsol/spikes.csv',
+    spikes_dir = 'output_comsol/_0_0/spikes.csv',
 )

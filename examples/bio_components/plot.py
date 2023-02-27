@@ -22,7 +22,7 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None):
     inactive = node_pos[n_spikes==0,:]
 
     p = ax.scatter(active[:,0], active[:,1], active[:,2], marker='o', s=20, cmap='cool', c=n_spikes[n_spikes!=0], label='activated neuron')
-    ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=2, c='0.5', label='non-activated neuron')
+    # ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.5', label='non-activated neuron')
     ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
     ax.view_init(elev=5., azim=0)
     ax.set_xlabel(labels[0])

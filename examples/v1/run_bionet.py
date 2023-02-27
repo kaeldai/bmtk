@@ -90,7 +90,7 @@ if __name__ == '__main__':
     parser.add_option('--direction-rule', dest='use_dr', action='store_true', default=False)
     parser.add_option('--lgn-file', dest='lgn_file', action='store', type='string', default=DEFAULT_LGN)
     parser.add_option('--bkg-file', dest='bkg_file', action='store', type='string', default=DEFAULT_BKG)
-    parser.add_option('--overwrite', dest='overwrite', action='store_true', default=False)
+    parser.add_option('--overwrite', dest='overwrite', action='store_true', default=True)
     options, args = parser.parse_args()
 
     usr_vars = vars(options)
