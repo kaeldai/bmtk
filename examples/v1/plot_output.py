@@ -25,11 +25,12 @@ config_file = 'config.json'
 
 # plot_raster(config_file=config_comsol)
 
-# plot_activity_3d(
-#     nodes_dir = 'networks_rebuilt/network/v1_nodes.h5',
-#     electrodes_dir = None,
-#     spikes_dir = 'output/LGN/spikes.csv',
-# )
+plot_activity_3d(
+    nodes_dir = 'networks_rebuilt/network/v1_nodes.h5',
+    electrodes_dir = None,
+    spikes_dir = 'output/LGN/spikes.csv',
+    spikes_bg_dir = 'output/LGN/spikes.csv'
+)
 
 plot_activity_distance(
     nodes_dir = 'networks_rebuilt/network/v1_nodes.h5',

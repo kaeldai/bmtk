@@ -4,14 +4,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import h5py as h5
 
-def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False):
+def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False, spikes_bg_dir = None):
     node_pos = HDF5(nodes_dir).get_positions_v1()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
 
     spikes = pd.read_csv(spikes_dir, sep='\s+')
-    labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
     for ind in spikes.index:
         n_spikes[spikes['node_ids'][ind]] += 1
+
+    if spikes_bg is not None:
+        spikes_bg = pd.read_csv(spikes_bg_dir, sep='\s+')
+        for ind in spikes_bg.index:
+            n_spikes[spikes['node_ids'][ind]] = np.max([n_spikes[spikes['node_ids'][ind]] - 1, 0])
+
 
     fig = plt.figure(figsize=(9,12))
     ax = plt.axes(projection="3d")
@@ -26,6 +31,7 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
         elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
         ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
     ax.view_init(elev=5., azim=0)
+    labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
