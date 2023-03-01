@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import h5py as h5
 
-def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False, spikes_bg_dir = None, v1=False):
+def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False, spikes_bg_dir = None, v1=False, spikes_bg_dir = None):
     if v1 == True:
         node_pos = HDF5(nodes_dir).get_positions_v1()
     elif v1 == False:
@@ -15,10 +15,10 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
     for ind in spikes.index:
         n_spikes[spikes['node_ids'][ind]] += 1
 
-    if spikes_bg_dir is not None:
+    if spikes_bg is not None:
         spikes_bg = pd.read_csv(spikes_bg_dir, sep='\s+')
         for ind in spikes_bg.index:
-            n_spikes[spikes_bg['node_ids'][ind]] = 0
+            n_spikes[spikes['node_ids'][ind]] = np.max([n_spikes[spikes['node_ids'][ind]] - 1, 0])
 
 
     fig = plt.figure(figsize=(9,12))
