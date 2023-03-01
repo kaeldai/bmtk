@@ -4,16 +4,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 import h5py as h5
 
-def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False):
-    node_pos = HDF5(nodes_dir).get_positions_v1()
+def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, square_axis=False, spikes_bg_dir = None, v1=False):
+    if v1 == True:
+        node_pos = HDF5(nodes_dir).get_positions_v1()
+    elif v1 == False:
+        node_pos = HDF5(nodes_dir).get_positions()
     n_spikes = np.zeros((np.shape(node_pos)[0]))
-    elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-    elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
     spikes = pd.read_csv(spikes_dir, sep='\s+')
-    labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
     for ind in spikes.index:
         n_spikes[spikes['node_ids'][ind]] += 1
+
+    if spikes_bg_dir is not None:
+        spikes_bg = pd.read_csv(spikes_bg_dir, sep='\s+')
+        for ind in spikes_bg.index:
+            n_spikes[spikes_bg['node_ids'][ind]] = 0
+
 
     fig = plt.figure(figsize=(9,12))
     ax = plt.axes(projection="3d")
@@ -22,9 +28,13 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
     inactive = node_pos[n_spikes==0,:]
 
     p = ax.scatter(active[:,0], active[:,1], active[:,2], marker='o', s=20, cmap='cool', c=n_spikes[n_spikes!=0], label='activated neuron')
-    ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.2', alpha=0.05, label='non-activated neuron')
-    ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
+    ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.2', alpha=0.2, label='non-activated neuron')
+    if electrodes_dir is not None:
+        elec_pos = pd.read_csv(electrodes_dir, sep=' ')
+        elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
+        ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
     ax.view_init(elev=5., azim=0)
+    labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
@@ -47,7 +57,9 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
     cbar.set_ticks(range(1,int(max(n_spikes))+1))
     if save_dir is not None:
         plt.savefig(save_dir, bbox_inches='tight', transparent=True)
+    print(n_spikes[n_spikes!=0])
     plt.show()
+
 
 
 def plot_positions(nodes_dir, save_dir=None):
@@ -69,9 +81,9 @@ def plot_positions(nodes_dir, save_dir=None):
 
 
 def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None, legend=None):
-    node_pos = HDF5(nodes_dir).get_positions()
+    node_pos = HDF5(nodes_dir).get_positions_v1()
     elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-    elec_pos = elec_pos[['pos_x', 'pos_x', 'pos_x']].to_numpy()[0]
+    elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
 
     r = np.zeros(np.size(node_pos, axis=0))
     for i in range(np.size(r)):
@@ -79,11 +91,11 @@ def plot_activity_distance(nodes_dir, electrodes_dir, spikes_dirs, save_dir=None
 
     fig = plt.figure()
     for spikes_dir in spikes_dirs:
-        spikes = pd.read_csv(spikes_dir, sep=' ')
+        spikes = pd.read_csv(spikes_dir, sep='\s+')
         n_spikes = np.zeros((np.shape(node_pos)[0]))
         for ind in spikes.index:
             n_spikes[spikes['node_ids'][ind]] += 1
-        plt.scatter(r, n_spikes, s=20, marker='o')
+        plt.scatter(r[n_spikes!=0], n_spikes[n_spikes!=0], s=20, marker='o')
     
     plt.xlabel('distance to electrode [$\mu m$]')
     plt.ylabel('# spikes [-]')

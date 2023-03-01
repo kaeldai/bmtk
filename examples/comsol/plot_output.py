@@ -9,7 +9,7 @@ from bmtk.analyzer.spike_trains import plot_raster, plot_rates_boxplot
 import bio_components.plot as bioplot
 
 
-config_file = 'config_comsol_0_0.json'
+# config_file = 'config_comsol_0.json'
 # config_file = 'config.simulation_vm.json'
 # config_file = 'config.simulation_ecp.json'
 
@@ -26,7 +26,12 @@ plt.show()
 
 bioplot.plot_activity_3d(
     nodes_dir = 'network/column_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/400_400.csv',
-    spikes_dir = 'outputs/output_400_400/spikes.csv',
-    save_dir = 'figures/3d_50',
+    electrodes_dir = '../bio_components/stimulations/0.csv',
+    spikes_dir = 'outputs/output_0/spikes.csv',
+)
+
+bioplot.plot_activity_3d(
+    nodes_dir = 'network/column_nodes.h5',
+    electrodes_dir = '../bio_components/stimulations/200.csv',
+    spikes_dir = 'outputs/output_200/spikes.csv',
 )

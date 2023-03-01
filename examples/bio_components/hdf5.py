@@ -9,8 +9,8 @@ class HDF5:
 
         self.dir = dir
         self.file = h5py.File(self.dir, 'r')
-        self.get_positions_v1()
-        self.get_rotations()
+        # self.get_positions_v1()
+        # self.get_rotations()
         if plot:
             self.plot_positions(labels=['X','Z','Y'])
 

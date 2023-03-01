@@ -15,13 +15,28 @@ import logging
 logger = logging.getLogger(__name__)
 
 np.random.seed(10)
-n_nodes = 1000
+n_nodes = 500
 
 column = NetworkBuilder('column')
 column.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, -450, 0], min_radius = 1, max_radius=845, height=800, plot=True),
+    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=845, height=800, plot=True),
+    rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
+    rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
+    rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
+    potental='exc',
+    model_type='biophysical',
+    model_template='ctdb:Biophys1.hoc',
+    model_processing='aibs_perisomatic',
+    dynamics_params='472363762_fit.json',
+    morphology='Scnn1a_473845048_m.swc'
+)
+
+column.add_nodes(
+    N=n_nodes,
+    pop_name='Scnn1a',
+    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=400, height=800, plot=True),
     rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),

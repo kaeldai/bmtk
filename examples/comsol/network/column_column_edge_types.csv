@@ -1,2 +1,2 @@
-edge_type_id target_query source_query syn_weight model_template target_sections distance_range delay dynamics_params
-100 pop_name=='Scnn1a' pop_name=='Scnn1a' 0.0002 exp2syn "['basal', 'apical', 'soma']" "[15.0, 150.0]" 2.0 AMPA_ExcToExc.json
+edge_type_id target_query source_query dynamics_params model_template target_sections delay syn_weight distance_range
+100 pop_name=='Scnn1a' pop_name=='Scnn1a' AMPA_ExcToExc.json exp2syn "['basal', 'apical', 'soma']" 2.0 0.0002 "[15.0, 150.0]"

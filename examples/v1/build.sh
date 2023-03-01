@@ -2,4 +2,4 @@
 source /users/students/r0754386/Documents/bmtk/bin/activate
 module load mpi
 cd /users/students/r0754386/Documents/bmtk/examples/v1
-mpirun -np 12 python build_network.py --fraction 0.01 -o networks_rebuilt/network0_01
+mpirun -np 12 python build_network.py --fraction 1.0 -o networks_rebuilt/network1
