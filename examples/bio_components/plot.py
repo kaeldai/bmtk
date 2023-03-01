@@ -29,6 +29,8 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
 
     p = ax.scatter(active[:,0], active[:,1], active[:,2], marker='o', s=20, cmap='cool', c=n_spikes[n_spikes!=0], label='activated neuron')
     ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.2', alpha=0.2, label='non-activated neuron')
+    cbar = plt.colorbar(p, label='# spikes [-]', shrink=0.5, pad=-0.1, anchor=(0.5, 1.0), panchor=(0.5, 0.0), orientation='horizontal')
+    cbar.set_ticks(range(1,int(max(n_spikes))+1))
     if electrodes_dir is not None:
         elec_pos = pd.read_csv(electrodes_dir, sep=' ')
         elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
@@ -53,11 +55,8 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
         for xb, yb, zb in zip(Xb, Yb, Zb):
             ax.plot([xb], [yb], [zb], 'w')
 
-    cbar = plt.colorbar(p, label='# spikes [-]', shrink=0.5, pad=-0.1)
-    cbar.set_ticks(range(1,int(max(n_spikes))+1))
     if save_dir is not None:
         plt.savefig(save_dir, bbox_inches='tight', transparent=True)
-    print(n_spikes[n_spikes!=0])
     plt.show()
 
 
