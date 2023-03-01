@@ -28,10 +28,12 @@ bioplot.plot_activity_3d(
     nodes_dir = 'network/column_nodes.h5',
     electrodes_dir = '../bio_components/stimulations/0.csv',
     spikes_dir = 'outputs/output_0/spikes.csv',
+    save_dir = 'figures/0'
 )
 
 bioplot.plot_activity_3d(
     nodes_dir = 'network/column_nodes.h5',
     electrodes_dir = '../bio_components/stimulations/200.csv',
     spikes_dir = 'outputs/output_200/spikes.csv',
+    save_dir = 'figures/200'
 )
