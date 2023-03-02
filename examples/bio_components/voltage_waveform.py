@@ -118,4 +118,4 @@ if __name__ == '__main__':
     If you run the file voltage_waveform.py instead of calling if from another file, this part will run.
     Can be used to optimize the waveform without each time writing values to the csv-file and calling the simulation.
     '''
-    waveform = CreateVoltageWaveform(timestep=1, current_amplitude=10, writing=True, plotting=True)
+    waveform = CreateVoltageWaveform(timestep=0.025, current_amplitude=1.5, writing=True, plotting=True)

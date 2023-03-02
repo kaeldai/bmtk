@@ -13,7 +13,7 @@ from bmtk.simulator.bionet.io_tools import io
 
 class XStimMod(SimulatorMod):
     def __init__(self, positions_file, waveform, mesh_files_dir=None, cells=None, set_nrn_mechanisms=True,
-                 resistance=300.0, node_set=None):
+                 resistance=300, node_set=None):
         self._positions_file = positions_file
         self._mesh_files_dir = mesh_files_dir if mesh_files_dir is not None \
             else os.path.dirname(os.path.realpath(self._positions_file))
@@ -149,8 +149,9 @@ class StimXElectrode(object):
                 rel_05 = rel - r05
                 r2 = np.einsum('ij,ij->j', rel_05, rel_05)
                 r = np.sqrt(r2)
-                if not all(i >= 10 for i in r):
-                    io.log_exception('External electrode is too close')
+                r = np.array([max(i,10) for i in r])
+                # if not all(i >= 10 for i in r):
+                #     io.log_exception('External electrode is too close')
                 cell_map[el, :] += 1. / r
 
         cell_map *= (rho / (4 * math.pi)) * 0.01

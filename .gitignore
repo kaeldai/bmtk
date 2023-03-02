@@ -47,6 +47,5 @@ examples/v1/networks_rebuilt
 examples/v1/output
 examples/v1/output_comsol
 examples/**/figures
-!examples/comsol/outputs/output*/log.txt
-!examples/comsol/outputs/output*/spikes*
+!examples/comsol/outputs/output_0/log.txt
 !examples/comsol/figures

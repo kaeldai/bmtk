@@ -7,7 +7,8 @@ from bmtk.analyzer.compartment import plot_traces
 from bmtk.analyzer.spike_trains import plot_raster, plot_rates_boxplot
 from bio_components.plot import plot_activity_3d, plot_activity_distance, plot_activity_distance
 
-config_comsol = 'config_comsol_0.json'
+config_comsol = 'config_comsol_0c.json'
+config_xstim = 'xstim/config_xstim_0.json'
 config_file = 'config.json'
 # config_file = 'config.simulation_vm.json'
 # config_file = 'config.simulation_ecp.json'
@@ -23,11 +24,20 @@ config_file = 'config.json'
 
 # plt.show()
 
-# # plot_raster(config_file=config_comsol)
+# plot_raster(config_file=config_xstim)
 
 plot_activity_3d(
-    nodes_dir = 'networks_rebuilt/network/v1_nodes.h5',
+    nodes_dir = 'networks_rebuilt/network10/v1_nodes.h5',
     electrodes_dir = None,
-    spikes_dir = 'output_comsol/0/spikes.csv',
-    spikes_bg_dir = 'output/LGN/spikes.csv'
+    spikes_dir = 'output_xstim/0_10/spikes.csv',
+    spikes_bg_dir = 'output/spikes.csv',
+    v1=True
+)
+
+plot_activity_3d(
+    nodes_dir = 'networks_rebuilt/network10/v1_nodes.h5',
+    electrodes_dir = None,
+    spikes_dir = 'output_comsol/0_10/spikes.csv',
+    spikes_bg_dir = 'output/spikes.csv',
+    v1=True
 )
