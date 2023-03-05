@@ -8,20 +8,20 @@ from bmtk.builder.auxi.node_params import positions_columinar, xiter_random
 from bio_components.hdf5 import HDF5
 from bmtk.builder.auxi.edge_connectors import distance_connector
 
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
+# from mpi4py import MPI
+# comm = MPI.COMM_WORLD
 
 import logging
 logger = logging.getLogger(__name__)
 
 np.random.seed(10)
-n_nodes = 500
+n_nodes = 100
 
 column = NetworkBuilder('column')
 column.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=845, height=800, plot=True),
+    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=400, height=800, plot=True),
     rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
@@ -36,7 +36,7 @@ column.add_nodes(
 column.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=400, height=800, plot=True),
+    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=200, height=800, plot=True),
     rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
