@@ -1,16 +1,19 @@
 # Comsol
 
-A small network of 200 multi-compartment biophysically detailed cells placed in a column with radius 200 $\mu m$ and height 400 $\mu m$. 
-The network receives input in the form of a time-dependent potential distribution defined by a .txt file that is exported from COMSOL. 
+A small network of 200 multi-compartment biophysically detailed cells placed in a column with radius 100 $\mu m$ and height 200 $\mu m$. 
+The network receives input in the form of potential distribution defined by a .txt file that is exported from COMSOL. 
 
 Uses the BioNet simulator (requires NEURON)
 
 ## Running:
 
 ```
-$ python run_bionet.py config_comsol.json
+$ python run_bionet.py config_comsol_*.json
 ```
-If successful, will create a *output* directory containing log, spike trains and recorded cell variables.
+config_comsol_1c.json will use a COMSOL simulation with a single electrode placed near the center of the column.
+<br> config_comsol_2x.json will use a COMSOL simulation with two electrodes spaced along the x-axis.
+
+The output files have already been generated in the *outputs* directory containing log, spike trains and recorded cell variables. Running the simulations again will overwrite the existing files.
 
 ## The Network:
 The network files have already been built and stored as SONATA files in the *network/* directory. The bmtk Builder
@@ -33,6 +36,12 @@ The COMSOL file path can be specified in config_comsol.json
       "input_type": "lfp",
       "node_set": "all",
       "module": "comsol",
-      "comsol_file": "$STIM_DIR/COMSOL.txt"
+      "comsol_file": "$STIM_DIR/COMSOL.txt",
+      "waveform": "$STIM_DIR/waveform.csv"
     }
 ```
+where *waveform* is optional. If it is specified, the COMSOL file should contain the output of a stationary study. If not, the COMSOL file should contain the output of a time-dependent study.
+
+## Plotting
+
+*plot_output.py* will generate figures showing the results. Some of them are already saved in the *figures* directory.
