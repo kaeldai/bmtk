@@ -28,13 +28,13 @@ def plot_activity_3d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
     inactive = node_pos[n_spikes==0,:]
 
     p = ax.scatter(active[:,0], active[:,1], active[:,2], marker='o', s=20, cmap='cool', c=n_spikes[n_spikes!=0], label='activated neuron')
-    ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.05', alpha=0.05, label='non-activated neuron')
+    ax.scatter(inactive[:,0], inactive[:,1], inactive[:,2], marker='o', s=1, c='0.5', alpha=0.5, label='non-activated neuron')
     cbar = plt.colorbar(p, label='# spikes [-]', shrink=0.5, pad=-0.1, anchor=(0.5, 1.0), panchor=(0.5, 0.0), orientation='horizontal')
-    cbar.set_ticks(range(int(min(n_spikes)),int(max(n_spikes))+1))
+    cbar.set_ticks(range(int(min(n_spikes[n_spikes!=0])),int(max(n_spikes))+1))
     if electrodes_dir is not None:
         elec_pos = pd.read_csv(electrodes_dir, sep=' ')
-        elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()[0]
-        ax.scatter(elec_pos[0], elec_pos[1], elec_pos[2], marker = 'd', s=100, color = 'r', label = 'electrode')
+        elec_pos = elec_pos[['pos_x', 'pos_y', 'pos_z']].to_numpy()
+        ax.scatter(elec_pos[:,0], elec_pos[:,1], elec_pos[:,2], marker = 'd', s=100, color = 'r', label = 'electrode')
     ax.view_init(elev=5., azim=0)
     labels = ['X [$\mu m$]', 'Y [$\mu m$]', 'Z [$\mu m$]']
     ax.set_xlabel(labels[0])

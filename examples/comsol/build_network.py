@@ -15,16 +15,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 np.random.seed(10)
-n_nodes = 100
+n_nodes = 200
 
 column = NetworkBuilder('column')
 column.add_nodes(
     N=n_nodes,
     pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=400, height=800, plot=True),
-    rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
+    positions=positions_columinar(N=n_nodes, center=[0, 250, 0], min_radius = 1, max_radius=100, height=200, plot=True),
     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
-    rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
     potental='exc',
     model_type='biophysical',
     model_template='ctdb:Biophys1.hoc',
@@ -33,27 +31,25 @@ column.add_nodes(
     morphology='Scnn1a_473845048_m.swc'
 )
 
-column.add_nodes(
-    N=n_nodes,
-    pop_name='Scnn1a',
-    positions=positions_columinar(N=n_nodes, center=[0, 400, 0], min_radius = 1, max_radius=200, height=800, plot=True),
-    rotation_angle_xaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
-    rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
-    rotation_angle_zaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
-    potental='exc',
-    model_type='biophysical',
-    model_template='ctdb:Biophys1.hoc',
-    model_processing='aibs_perisomatic',
-    dynamics_params='472363762_fit.json',
-    morphology='Scnn1a_473845048_m.swc'
-)
+# column.add_nodes(
+#     N=n_nodes,
+#     pop_name='Scnn1a',
+#     positions=positions_columinar(N=n_nodes, center=[0, 250, 0], min_radius = 1, max_radius=50, height=200, plot=True),
+#     rotation_angle_yaxis=xiter_random(N=n_nodes, min_x=0.0, max_x=2*np.pi),
+#     potental='exc',
+#     model_type='biophysical',
+#     model_template='ctdb:Biophys1.hoc',
+#     model_processing='aibs_perisomatic',
+#     dynamics_params='472363762_fit.json',
+#     morphology='Scnn1a_473845048_m.swc'
+# )
 
 column.add_edges(
     source={'pop_name': 'Scnn1a'}, target={'pop_name': 'Scnn1a'},
     connection_rule=distance_connector,
     connection_params={'d_weight_min': 0.0, 'd_weight_max': 0.34, 'd_max': 50.0, 'nsyn_min': 0, 'nsyn_max': 10},
     syn_weight=2.0e-04,
-    distance_range=[15.0, 150.0],
+    distance_range=[5.0, 50.0],
     target_sections=['basal', 'apical', 'soma'],
     delay=2.0,
     dynamics_params='AMPA_ExcToExc.json',

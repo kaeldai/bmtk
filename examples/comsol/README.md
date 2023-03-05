@@ -1,6 +1,6 @@
 # Comsol
 
-A small network of 200 multi-compartment biophysically detailed cells placed in a column with radius 200 $\mu m$ and height 800 $\mu m$. 
+A small network of 200 multi-compartment biophysically detailed cells placed in a column with radius 200 $\mu m$ and height 400 $\mu m$. 
 The network receives input in the form of a time-dependent potential distribution defined by a .txt file that is exported from COMSOL. 
 
 Uses the BioNet simulator (requires NEURON)

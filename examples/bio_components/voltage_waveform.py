@@ -21,11 +21,11 @@ class CreateVoltageWaveform:
         is not plotted each time you run the simulation.
         '''
         self.current_amplitude = current_amplitude
-
+        self.timestep = timestep
         # Stimulation parameters (can be changed but these are the real ones used in the experiments)
-        self.period = int(4600/timestep) # 200 Hz stimulation frequency = every 5 ms = 4600us after previous pulse
+        self.period = int(5000/timestep) # 200 Hz stimulation frequency = every 5 ms = 4600us after previous pulse
         self.pulsewidth = int(200/timestep)
-        self.nb_pulses = 10 #40
+        self.nb_pulses = 1 #40
 
         # Create arrays for the timing
         self.time = np.linspace(0, self.pulsewidth, self.pulsewidth+1, dtype=int)
@@ -43,6 +43,9 @@ class CreateVoltageWaveform:
                 # Add the time and amplitude from this one pulse(phase) to the full lists that will be written to the csv file
                 self.full_time = np.append(self.full_time,self.time + phase * self.pulsewidth + pulse * self.period)
                 self.full_amplitude = np.append(self.full_amplitude,self.amplitude)
+
+            self.full_time = np.append(self.full_time, (pulse+1)*self.period)
+            self.full_amplitude = np.append(self.full_amplitude,0)
 
         # If writing is set to true (default), write_to_csv() will be called
         # print(self.full_time)
@@ -68,11 +71,11 @@ class CreateVoltageWaveform:
         # v = V0(1-exp(-t/RC))
         v = np.array([])
         for time in t:
-            v = np.append(v, V0*(1-np.exp(-time*1E-6/(R*C))) + V0) # (Vc+Vr)
+            v = np.append(v, V0*(1-np.exp(-time*self.timestep*1E-6/(R*C))) + V0) # (Vc+Vr)
             # v = np.append(v, V0*(1-np.exp(-time*1E-6/(R*C)))*1E3)   # mV
             # v = np.append(v, V0*(1-np.exp(-time*1E-6/(R*C))))   # V
             # v = np.append(v, V0)
-        
+        np.append
              
         # Make sure that the first and last values are 0, otherwise there might be problems with full waveform later
         v[0] = 0
@@ -99,7 +102,7 @@ class CreateVoltageWaveform:
         #name = 'waveform_custom.csv'
 
         path = ('../bio_components/stimulations')
-        name = 'waveform_custom.csv'
+        name = 'waveform.csv'
 
         # Write the time and amplitude lists to the csv-file
         df = pd.DataFrame({'time': self.full_time, 'amplitude': self.full_amplitude})
@@ -118,4 +121,4 @@ if __name__ == '__main__':
     If you run the file voltage_waveform.py instead of calling if from another file, this part will run.
     Can be used to optimize the waveform without each time writing values to the csv-file and calling the simulation.
     '''
-    waveform = CreateVoltageWaveform(timestep=0.025, current_amplitude=1.5, writing=True, plotting=True)
+    waveform = CreateVoltageWaveform(timestep=25, current_amplitude=64, writing=True, plotting=True)

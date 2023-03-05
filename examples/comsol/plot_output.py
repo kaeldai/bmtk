@@ -22,18 +22,18 @@ import bio_components.plot as bioplot
 #         times=(0.0, 200.0), show=False
 #     )
 
-plt.show()
+plot_raster(config_file='config_comsol_1c.json')
 
 bioplot.plot_activity_3d(
     nodes_dir = 'network/column_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/0.csv',
-    spikes_dir = 'outputs/output_0/spikes.csv',
-    save_dir = 'figures/0'
+    electrodes_dir = '../bio_components/stimulations/1c.csv',
+    spikes_dir = 'outputs/output_1c/spikes.csv',
+    save_dir = 'figures/1c'
 )
 
 bioplot.plot_activity_3d(
     nodes_dir = 'network/column_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/200.csv',
-    spikes_dir = 'outputs/output_200/spikes.csv',
-    save_dir = 'figures/200'
+    electrodes_dir = '../bio_components/stimulations/2x.csv',
+    spikes_dir = 'outputs/output_2x/spikes.csv',
+    save_dir = 'figures/2x'
 )
