@@ -6,6 +6,8 @@ import six
 from neuron import h
 
 from scipy.interpolate import NearestNDInterpolator as NNip
+from scipy.interpolate import LinearNDInterpolator as Lip
+
 from bmtk.simulator.bionet.modules.sim_module import SimulatorMod
 from bmtk.simulator.bionet.modules.xstim_waveforms import stimx_waveform_factory
 
@@ -25,13 +27,15 @@ class ComsolMod(SimulatorMod):
     """
 
     def __init__(self, comsol_file, waveform=None, cells=None, set_nrn_mechanisms=True,
-                 node_set=None):
+                 node_set=None, amplitude=1, ip_method='NN'):
 
         if waveform is not None:
             self._waveform = stimx_waveform_factory(waveform)
         else:
             self._waveform = None
         
+        self._amplitude = amplitude
+        self._ip_method = ip_method
         self._comsol_file = comsol_file
 
         # extract useful information from header row in COMSOL output .txt file. 
@@ -46,9 +50,15 @@ class ComsolMod(SimulatorMod):
         self._timepoints = np.array(header[3:], dtype=float)    # create array of timepoints  
 
         # load data in COMSOL output .txt file.  
-        self._comsol = pd.read_csv(comsol_file, sep="\s+", header=None, skiprows=9, names=header)       # load data from .txt file
-        self._NNip = NNip(self._comsol[['x','y','z']], np.arange(len(self._comsol['x'])))               # create scipy NN interpolation object 
-        self._NN = {}                                           # initialise empty dictionary that will contain NN map of each cell
+        self._comsol = pd.read_csv(comsol_file, sep="\s+", header=None, skiprows=9, names=header)           # load data from .txt file
+        
+        if self._ip_method == 'NN':
+            self._NNip = NNip(self._comsol[['x','y','z']], np.arange(len(self._comsol['x'])))               # create scipy NN interpolation object 
+            self._NN = {}                                           # initialise empty dictionary that will contain NN map of each cell
+        
+        elif self._ip_method == 'L':                 # Only works if waveform is specified
+            self._Lip = Lip(self._comsol[['x','y','z']], self._comsol[0])
+            self._L = {}
 
         self._set_nrn_mechanisms = set_nrn_mechanisms
         self._cells = cells
@@ -69,7 +79,10 @@ class ComsolMod(SimulatorMod):
 
             # spatial interpolation
             r05 = cell.seg_coords.p05               # get position of middle of segment
-            self._NN[gid] = self._NNip(r05.T)       # get nearest COMSOL node
+            if self._ip_method == 'NN':
+                self._NN[gid] = self._NNip(r05.T)       # get nearest COMSOL node
+            elif self._ip_method == 'L':
+                self._L[gid] = self._Lip(r05.T)
 
         if self._waveform is None:
             # temporal interpolation
@@ -85,15 +98,22 @@ class ComsolMod(SimulatorMod):
     def step(self, sim, tstep):
         for gid in self._local_gids:
             cell = sim.net.get_cell_gid(gid)        # get cell gid
-            NN = self._NN[gid]                      # vector that points each node of the cell to its nearest neighbour in the .txt file
-
-            if self._waveform is None:
-                T = int(1000*self._timepoints[-1]/sim.dt)
-                tstep = tstep % T                   # In case of periodic stimulation
-                v_ext = self._arr[NN,tstep+1]       # assign extracellular potential value of NN at tstep
-            else:
+            if self._ip_method == 'NN':
+                NN = self._NN[gid]                      # vector that points each node of the cell to its nearest neighbour in the .txt file
+                if self._waveform is None:
+                    T = int(1000*self._timepoints[-1]/sim.dt)
+                    tstep = tstep % T                   # In case of periodic stimulation
+                    v_ext = self._arr[NN,tstep+1]       # assign extracellular potential value of NN at tstep
+                else:
+                    T = int(self._waveform.definition["time"].iloc[-1])
+                    tstep = tstep % T                   # In case of periodic stimulation
+                    v_ext = self._arr[NN]*self._waveform.calculate(tstep+1)
+            elif self._ip_method == 'L':
+                L = self._L[gid]
                 T = int(self._waveform.definition["time"].iloc[-1])
-                tstep = tstep % T                   # In case of periodic stimulation
-                v_ext = self._arr[NN]*self._waveform.calculate(tstep+1)
+                tstep = tstep % T                       # In case of periodic stimulation
+                v_ext = L*self._waveform.calculate(tstep+1)
+
+            v_ext *= self._amplitude
 
             cell.set_e_extracellular(h.Vector(v_ext))
