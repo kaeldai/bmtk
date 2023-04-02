@@ -164,12 +164,28 @@ class DenseNetwork(Network):
         logger.debug('Generating edges data for edge_types_id {}.'.format(edge_type_id))
         edges_table = EdgeTypesTable(connection_map, network_name=self.name)
         connections = connection_map.connection_itr()
+        # print(connection_map.iterator)
+        # print(connections)
+        # exit()
 
         # iterate through all possible SxT source/target pairs and use the user-defined function/list/value to update
         # the number of syns between each pair. TODO: See if this can be vectorized easily.
-        for conn in connections:
-            if conn[2]:
-                edges_table.set_nsyns(source_id=conn[0], target_id=conn[1], nsyns=conn[2])
+        if connection_map.iterator == 'one_to_one':
+            for conn in connections:
+                if conn[2]:
+                    edges_table.set_nsyn(source_id=conn[0], target_id=conn[1], nsyn=conn[2])
+
+        else:
+            for conn in connections:
+                val_array = np.array(conn[2], dtype=float)
+                valid_idx = np.argwhere(val_array > 0).flatten()
+                if len(valid_idx) > 0:
+                    srcs = conn[0][valid_idx]
+                    trgs = conn[1][valid_idx]
+                    vals = val_array[valid_idx]
+                    edges_table.set_nsyns(source_ids=srcs, target_ids=trgs, nsyns=vals)
+
+        edges_table.clean()
 
         target_net = connection_map.target_nodes
         self._target_networks[target_net.network_name] = target_net.network
@@ -203,7 +219,7 @@ class DenseNetwork(Network):
                     for pname, pval in zip(pnames, pvals):
                         edges_table.set_property_value(prop_name=pname, edge_index=edge_index, prop_value=pval)
 
-        logger.debug('Edge-types {} data built with {} connection ({} synapses)'.format(
+        logger.debug('Edge-types {} data built with {:,} connection ({:,} synapses)'.format(
             edge_type_id, edges_table.n_edges, edges_table.n_syns)
         )
 

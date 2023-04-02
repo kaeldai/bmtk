@@ -54,10 +54,10 @@ class EdgesCollatorSingular(object):
         group_idx = {g_id: 0 for g_id in self._model_groups_md.keys()}
         for et in self._edge_types_tables:
             idx_end = idx_beg + et.n_edges
-
-            src_trg_ids = et.edge_type_node_ids
-            self.source_ids[idx_beg:idx_end] = src_trg_ids[:, 0]
-            self.target_ids[idx_beg:idx_end] = src_trg_ids[:, 1]
+            
+            src_ids, trg_ids = et.edge_type_node_ids
+            self.source_ids[idx_beg:idx_end] = src_ids # src_trg_ids[:, 0]
+            self.target_ids[idx_beg:idx_end] = trg_ids # src_trg_ids[:, 1]
             self.edge_type_ids[idx_beg:idx_end] = et.edge_type_id
             self.edge_group_ids[idx_beg:idx_end] = et.edge_group_id
 

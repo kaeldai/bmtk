@@ -41,14 +41,21 @@ class EdgeTypesTableMemory(object):
         self.edge_type_id = connection_map.edge_type_properties['edge_type_id']
         self.edge_group_id = -1  # This will be assigned later during save_edges
 
-        # Create the nsyns table to store the num of synapses/edges between each possible source/target node pair
-        self._nsyns_idx2src = [n.node_id for n in connection_map.source_nodes]
-        self._nsyns_src2idx = {node_id: i for i, node_id in enumerate(self._nsyns_idx2src)}
-        self._nsyns_idx2trg = [n.node_id for n in connection_map.target_nodes]
-        self._nsyns_trg2idx = {node_id: i for i, node_id in enumerate(self._nsyns_idx2trg)}
-        self._nsyns_updated = False
-        self._n_syns = 0
-        self.nsyn_table = np.zeros((len(self._nsyns_idx2src), len(self._nsyns_idx2trg)), dtype=np.uint32)
+        # # Create the nsyns table to store the num of synapses/edges between each possible source/target node pair
+        # self._nsyns_idx2src = [n.node_id for n in connection_map.source_nodes]
+        # self._nsyns_src2idx = {node_id: i for i, node_id in enumerate(self._nsyns_idx2src)}
+        # self._nsyns_idx2trg = [n.node_id for n in connection_map.target_nodes]
+        # self._nsyns_trg2idx = {node_id: i for i, node_id in enumerate(self._nsyns_idx2trg)}
+        # self._nsyns_updated = False
+        # self._n_syns = 0
+        # self.nsyn_table = np.zeros((len(self._nsyns_idx2src), len(self._nsyns_idx2trg)), dtype=np.uint32)
+        
+        max_conns = len(connection_map.source_nodes)*len(connection_map.target_nodes)
+        self.nsyn_table_src_ids = np.zeros(max_conns, dtype=np.uint32)
+        self.nsyn_table_trg_ids = np.zeros(max_conns, dtype=np.uint32)
+        self.nsyn_table_vals = np.zeros(max_conns, dtype=np.uint16)
+        self._nsyn_table_idx = 0
+        self._nsyns = -1
 
         self._prop_vals = {}  # used to store the arrays for each property
         self._prop_node_ids = None  # used to save the source_node_id and target_node_id for each edge
@@ -58,10 +65,15 @@ class EdgeTypesTableMemory(object):
     @property
     def n_syns(self):
         """Number of synapses."""
-        if self._nsyns_updated:
-            self._nsyns_updated = False
-            self._n_syns = int(np.sum(self.nsyn_table))
+        if self._nsyns < 0:
+            self._n_syns = np.sum(self.nsyn_table_vals[0:self._nsyn_table_idx])
+        
         return self._n_syns
+
+        # if self._nsyns_updated:
+        #     self._nsyns_updated = False
+        #     self._n_syns = int(np.sum(self.nsyn_table))
+        # return self._n_syns
 
     @property
     def n_edges(self):
@@ -69,24 +81,39 @@ class EdgeTypesTableMemory(object):
         represented with just one edge it will have n_edges < n_syns.
         """
         if self._prop_vals:
-            return self.n_syns
+            return int(self.n_syns)
         else:
-            return np.count_nonzero(self.nsyn_table)
+            # return np.count_nonzero(self.nsyn_table)
+            return int(self._nsyn_table_idx)
 
     @property
     def edge_type_node_ids(self):
         """Returns a table n_edges x 2, first column containing source_node_ids and second target_node_ids."""
         if self._prop_node_ids is None or self._nsyns_updated:
             if len(self._prop_vals) == 0:
-                # Get the source and target node ids from the rows/columns of nsyns table cells that are greater than 0
-                nsyn_table_flat = self.nsyn_table.ravel()
-                src_trg_prods = np.array(np.meshgrid(self._nsyns_idx2src, self._nsyns_idx2trg)).T.reshape(-1, 2)
-                nonzero_idxs = np.argwhere(nsyn_table_flat > 0).flatten()
-                self._prop_node_ids = src_trg_prods[nonzero_idxs, :].astype(np.uint64)
+                return self.nsyn_table_src_ids[:self._nsyn_table_idx], self.nsyn_table_trg_ids[:self._nsyn_table_idx]
+                # # Get the source and target node ids from the rows/columns of nsyns table cells that are greater than 0
+                # nsyn_table_flat = self.nsyn_table.ravel()
+                # src_trg_prods = np.array(np.meshgrid(self._nsyns_idx2src, self._nsyns_idx2trg)).T.reshape(-1, 2)
+                # nonzero_idxs = np.argwhere(nsyn_table_flat > 0).flatten()
+                # self._prop_node_ids = src_trg_prods[nonzero_idxs, :].astype(np.uint64)
 
             else:
                 # If there are synaptic properties go through each source/target pair and add their node-ids N times,
                 # where N is the number of synapses between the two nodes
+                repeats = self.nsyn_table_vals[:self._nsyn_table_idx]
+                src_ids_unrolled = np.repeat(self.nsyn_table_src_ids[:self._nsyn_table_idx], repeats)
+                trg_ids_unrolled = np.repeat(self.nsyn_table_trg_ids[:self._nsyn_table_idx], repeats)
+                return src_ids_unrolled, trg_ids_unrolled
+                # print(tmp_src_ids)
+                # print(tmp_nsyns_vals)
+                # print(np.repeat(tmp_src_ids, tmp_nsyns_vals).shape)
+                # print(np.cumsum(tmp_nsyns_vals))
+                # exit()
+                
+                # print(self.nsyn_table_src_ids)
+                
+                
                 self._prop_node_ids = np.zeros((self.n_edges, 2), dtype=np.int64)
                 idx = 0
                 for r, src_id in enumerate(self._nsyns_idx2src):
@@ -97,7 +124,7 @@ class EdgeTypesTableMemory(object):
                         self._prop_node_ids[idx:(idx + nsyns), 1] = trg_id
                         idx += nsyns
 
-        return self._prop_node_ids
+        # return self._prop_node_ids
 
     @property
     def source_nodes_map(self):
@@ -130,15 +157,34 @@ class EdgeTypesTableMemory(object):
 
     def get_property_metatadata(self):
         if not self._prop_vals:
-            return [{'name': 'nsyns', 'dtype': self.nsyn_table.dtype}]
+            return [{'name': 'nsyns', 'dtype': self.nsyn_table_vals.dtype}]
         else:
             return [{'name': pname, 'dtype': pvals.dtype} for pname, pvals in self._prop_vals.items()]
 
-    def set_nsyns(self, source_id, target_id, nsyns):
-        assert(nsyns >= 0)
-        indexed_pair = (self._nsyns_src2idx[source_id], self._nsyns_trg2idx[target_id])
-        self.nsyn_table[indexed_pair] = nsyns
-        self._nsyns_updated = True
+    def set_nsyns(self, source_ids, target_ids, nsyns):
+        # assert(nsyns >= 0)
+        beg_idx = self._nsyn_table_idx
+        end_idx = self._nsyn_table_idx + len(nsyns)
+        self.nsyn_table_src_ids[beg_idx:end_idx] = source_ids
+        self.nsyn_table_trg_ids[beg_idx:end_idx] = target_ids
+        self.nsyn_table_vals[beg_idx:end_idx] = nsyns
+        
+        self._nsyn_table_idx = end_idx
+
+        # indexed_pair = (self._nsyns_src2idx[source_id], self._nsyns_trg2idx[target_id])
+        # self.nsyn_table[indexed_pair] = nsyns
+        # self._nsyns_updated = True
+
+    def set_nsyn(self, source_id, target_id, nsyn):
+        self.nsyn_table_src_ids[self._nsyn_table_idx] = source_id
+        self.nsyn_table_trg_ids[self._nsyn_table_idx] = target_id
+        self.nsyn_table_vals[self._nsyn_table_idx] = nsyn
+        self._nsyn_table_idx += 1
+
+    def clean(self):
+        self.nsyn_table_src_ids = self.nsyn_table_src_ids[:self._nsyn_table_idx]
+        self.nsyn_table_trg_ids = self.nsyn_table_trg_ids[:self._nsyn_table_idx]
+        self.nsyn_table_vals = self.nsyn_table_vals[:self._nsyn_table_idx]
 
     def create_property(self, prop_name, prop_type=None):
         assert(prop_name not in self._prop_vals)
@@ -147,34 +193,51 @@ class EdgeTypesTableMemory(object):
         self._prop_vals[prop_name] = np.zeros(prop_size, dtype=prop_type)
 
     def iter_edges(self):
-        prop_node_ids = self.edge_type_node_ids
-        src_nodes_lu = self.source_nodes_map
-        trg_nodes_lu = self.target_nodes_map
-        for edge_index in range(self.n_edges):
-            src_id = prop_node_ids[edge_index, 0]
-            trg_id = prop_node_ids[edge_index, 1]
-            source_node = src_nodes_lu[src_id]
-            target_node = trg_nodes_lu[trg_id]
+        edge_index = 0
+        for idx in range(self._nsyn_table_idx):
+            nsyns = self.nsyn_table_vals[idx]
+            src_id = self.nsyn_table_src_ids[idx]
+            trg_id = self.nsyn_table_trg_ids[idx]
+            # print(self.source_nodes_map[src_id])
+            # exit()
+            for edge_index in range(nsyns):
+                source_node = self.source_nodes_map[src_id]
+                target_node = self.target_nodes_map[trg_id]
+                yield source_node, target_node, edge_index
+                edge_index += 1
 
-            yield source_node, target_node, edge_index
+                
+
+        # exit()
+
+        # prop_node_ids = self.edge_type_node_ids
+        # src_nodes_lu = self.source_nodes_map
+        # trg_nodes_lu = self.target_nodes_map
+        # for edge_index in range(self.n_edges):
+        #     src_id = prop_node_ids[edge_index, 0]
+        #     trg_id = prop_node_ids[edge_index, 1]
+        #     source_node = src_nodes_lu[src_id]
+        #     target_node = trg_nodes_lu[trg_id]
+
+        #     yield source_node, target_node, edge_index
 
     def set_property_value(self, prop_name, edge_index, prop_value):
         self._prop_vals[prop_name][edge_index] = prop_value
 
     def get_property_value(self, prop_name):
         if prop_name == 'nsyns':
-            nsyns_table_flat = self.nsyn_table.ravel()
-            nonzero_indxs = np.argwhere(nsyns_table_flat > 0).flatten()
-
-            return nsyns_table_flat[nonzero_indxs]
+            # nsyns_table_flat = self.nsyn_table.ravel()
+            # nonzero_indxs = np.argwhere(nsyns_table_flat > 0).flatten()
+            # return nsyns_table_flat[nonzero_indxs]
+            return self.nsyn_table_vals[:self._nsyn_table_idx]
         else:
             return self._prop_vals[prop_name]
 
     def to_dataframe(self, **kwargs):
-        src_trg_ids = self.edge_type_node_ids
+        src_ids, trg_ids = self.edge_type_node_ids
         ret_df = pd.DataFrame({
-            'source_node_id': src_trg_ids[:, 0],
-            'target_node_id': src_trg_ids[:, 1],
+            'source_node_id': src_ids,
+            'target_node_id': trg_ids,
             # 'edge_type_id': self.edge_type_id
         })
         for edge_prop in self.get_property_metatadata():
@@ -187,7 +250,9 @@ class EdgeTypesTableMemory(object):
         pass
 
     def free_data(self):
-        del self.nsyn_table
+        del self.nsyn_table_src_ids
+        del self.nsyn_table_trg_ids
+        del self.nsyn_table_vals
         del self._prop_vals
 
 
@@ -228,8 +293,10 @@ class EdgeTypesTableMPI(EdgeTypesTableMemory):
         """Saves edges data to hdf5 on the disk so that other ranks can read it (without MPISend)."""
         self._init_tmp_table()
 
-        src_trg_ids = super().edge_type_node_ids
-        if src_trg_ids.shape[0] == 0:
+        source_node_ids, target_node_ids = super().edge_type_node_ids
+        # print(src_trg_ids)
+        # exit()
+        if len(source_node_ids) == 0:
             # ignore if no actual edges
             return
 
@@ -241,8 +308,8 @@ class EdgeTypesTableMPI(EdgeTypesTableMemory):
 
             edge_type_grp = h5.create_group('/unprocessed/{}/{}'.format(self._network_name, edge_type_id_str))
 
-            edge_type_grp.create_dataset('source_node_id', data=src_trg_ids[:, 0])
-            edge_type_grp.create_dataset('target_node_id', data=src_trg_ids[:, 1])
+            edge_type_grp.create_dataset('source_node_id', data=source_node_ids)
+            edge_type_grp.create_dataset('target_node_id', data=target_node_ids)
 
             for prop_mdata in super().get_property_metatadata():
                 pname = prop_mdata['name']

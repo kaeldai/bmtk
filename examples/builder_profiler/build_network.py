@@ -1,0 +1,112 @@
+import os
+import sys
+import h5py
+import numpy as np
+import logging
+import cProfile, pstats
+import matplotlib.pyplot as plt
+from memory_profiler import memory_usage, LogFile, profile
+
+from bmtk.builder import NetworkBuilder
+
+# sys.stdout = LogFile('memory_profile_log')
+logger = logging.getLogger()
+
+
+def connect_all2one(sources, target):
+    # return np.random.randint(0, 30, size=len(sources))
+    src_ids = np.array([s.node_id for s in sources])
+    trg_id = target.node_id
+    return np.mod(src_ids*trg_id, 13)
+
+
+def connect_one2one(source, target):
+    return np.random.randint(0, 30)
+
+
+connect_props = {
+    'one_to_one': {
+        'connection_rule': connect_one2one,
+        'iterator': 'one_to_one'    
+    },
+    'all_to_one': {
+        'connection_rule': connect_all2one,
+        'iterator': 'all_to_one'    
+    }
+}
+
+
+@profile
+def build_network(n_nodes=6000, iterator='one_to_one'):
+    np.random.seed(100)
+    net = NetworkBuilder('net')
+    net.add_nodes(N=n_nodes)
+    cm = net.add_edges(**connect_props[iterator])
+    # cm.add_properties('weight', rule=1.0, dtypes=float)
+    net.build()
+    net.save(output_dir='network')
+
+
+def check_edges():
+    with h5py.File('network/net_net_edges.h5', 'r') as h5:
+        src_ids = h5['/edges/net_to_net/source_node_id'][()]
+        trg_ids = h5['/edges/net_to_net/target_node_id'][()]
+        nsyns = h5['/edges/net_to_net/0/nsyns'][()]
+        check_vals = np.mod(src_ids*trg_ids, 13)
+        assert(np.all(check_vals == nsyns))
+
+
+def setup_logger(n_nodes, iterator, version, profiler):
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(logging.DEBUG)
+    stdout_handler.setFormatter(formatter)
+    logger.addHandler(stdout_handler)
+
+    log_file = f'{profiler}_log.{n_nodes}nodes.{iterator}.{version}.txt'
+    if os.path.exists(log_file):
+        os.remove(log_file)
+
+    file_logger = logging.FileHandler(log_file)
+    file_logger.setFormatter(formatter)
+    file_logger.setLevel(logging.DEBUG)
+    logger.addHandler(file_logger)
+
+
+def profile_mem(n_nodes, iterator, version):
+    setup_logger(n_nodes, iterator, version, 'mem')
+    logger.info('---PROFILING MEMORY---')
+    sys.stdout = LogFile()
+
+    mem = memory_usage((build_network, (n_nodes, iterator)))
+
+    logger.setLevel(logging.INFO)
+    plt.plot(mem)
+    plt.savefig(f'mem_plot.{n_nodes}nodes.{iterator}.{version}.png')
+
+
+def profile_stats(n_nodes, iterator, version):
+    setup_logger(n_nodes, iterator, version, 'run')
+    logger.info('---PROFILING RUNTIME---')
+    
+    pr = cProfile.Profile()
+    pr.enable()
+
+    build_network(n_nodes=n_nodes, iterator=iterator)
+
+    pr.disable()
+    ps = pstats.Stats(pr)
+    ps.dump_stats(f'runtime_profile.{n_nodes}nodes.{iterator}.{version}.stats')
+
+
+if __name__ == '__main__':
+    version = 'fix_iterator'
+    n_nodes = 5000
+    # iterator = 'one_to_one'
+    iterator = 'all_to_one'
+    
+
+    # profile_mem(n_nodes=n_nodes, iterator=iterator, version=version)
+    profile_stats(n_nodes=n_nodes, iterator=iterator, version=version)
+    # check_edges()

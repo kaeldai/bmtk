@@ -65,14 +65,25 @@ def one_to_all_iterator(source_nodes, target_nodes, connector):
         for i, target in enumerate(target_list):
             yield (source_node_id, target_node_ids[i], edge_vals[i])
 
+import numpy as np
 
 def all_to_one_iterator(source_nodes, target_nodes, connector):
     """Iterate through all the target nodes and return target node + list of all sources"""
     source_list = list(source_nodes)
     for target in target_nodes:
-        val = connector(source_list, target)
-        for i, source in enumerate(source_list):
-            yield (source.node_id, target.node_id, val[i])
+        vals = connector(source_list, target)
+        # print(len(val), len(source_list))
+        # print(len(target_nodes), target)
+        # print(target_nodes)
+        # print(type(target), target.node_id)
+        # print(val)
+        source_node_ids = [s.node_id for s in source_nodes]
+        target_node_ids = [target.node_id]*len(source_list)
+        # print('BOO')
+        yield (np.array(source_node_ids), np.array(target_node_ids), vals)
+        # exit()
+        # for i, source in enumerate(source_list):
+        #     yield (source.node_id, target.node_id, val[i])
 
 
 def one_to_one_iterator(source_nodes, target_nodes, connector):
@@ -101,9 +112,10 @@ def all_to_one_list_iterator(source_nodes, target_nodes, vals):
     assert(len(vals) == len(source_nodes))
     source_ids = [s.node_id for s in list(source_nodes)]
     target_ids = [t.node_id for t in list(target_nodes)]
-    for trg_id in target_ids:
-        for i, src_id in enumerate(source_ids):
-            yield (src_id, trg_id, vals[i])
+    yield source_ids, target_ids, vals
+    # for trg_id in target_ids:
+    #     for i, src_id in enumerate(source_ids):
+    #         yield (src_id, trg_id, vals[i])
 
 
 def lambda_iterator(source_nodes, target_nodes, lambda_val):

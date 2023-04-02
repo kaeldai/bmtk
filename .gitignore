@@ -35,3 +35,6 @@ benchmarks/.asv
 .conda/conda-bld/**/*
 **/*.code-workspace
 **/.coverage
+examples/builder_profiler/*.txt
+examples/builder_profiler/*.stats
+examples/builder_profiler/*.png
