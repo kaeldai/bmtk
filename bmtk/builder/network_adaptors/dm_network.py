@@ -164,9 +164,6 @@ class DenseNetwork(Network):
         logger.debug('Generating edges data for edge_types_id {}.'.format(edge_type_id))
         edges_table = EdgeTypesTable(connection_map, network_name=self.name)
         connections = connection_map.connection_itr()
-        # print(connection_map.iterator)
-        # print(connections)
-        # exit()
 
         # iterate through all possible SxT source/target pairs and use the user-defined function/list/value to update
         # the number of syns between each pair. TODO: See if this can be vectorized easily.

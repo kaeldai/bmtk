@@ -9,6 +9,19 @@ from memory_profiler import memory_usage, LogFile, profile
 
 from bmtk.builder import NetworkBuilder
 
+try:
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    mpi_rank = comm.Get_rank()
+    mpi_size = comm.Get_size()
+    barrier = comm.barrier
+
+except ImportError:
+    mpi_rank = 0
+    mpi_size = 1
+
+
 # sys.stdout = LogFile('memory_profile_log')
 logger = logging.getLogger()
 
@@ -64,7 +77,8 @@ def setup_logger(n_nodes, iterator, version, profiler):
     stdout_handler.setFormatter(formatter)
     logger.addHandler(stdout_handler)
 
-    log_file = f'{profiler}_log.{n_nodes}nodes.{iterator}.{version}.txt'
+    rank_str = '' if mpi_size < 2 else '.rank{}'.format(mpi_rank)
+    log_file = f'{profiler}_log.{n_nodes}nodes.{iterator}.{version}{rank_str}.txt'
     if os.path.exists(log_file):
         os.remove(log_file)
 
@@ -82,8 +96,10 @@ def profile_mem(n_nodes, iterator, version):
     mem = memory_usage((build_network, (n_nodes, iterator)))
 
     logger.setLevel(logging.INFO)
+    rank_str = '' if mpi_size < 2 else '.rank{}'.format(mpi_rank)
+    mem_profile_path = f'mem_plot.{n_nodes}nodes.{iterator}.{version}{rank_str}.png'
     plt.plot(mem)
-    plt.savefig(f'mem_plot.{n_nodes}nodes.{iterator}.{version}.png')
+    plt.savefig(mem_profile_path)
 
 
 def profile_stats(n_nodes, iterator, version):

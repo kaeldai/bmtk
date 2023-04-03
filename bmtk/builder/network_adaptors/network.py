@@ -32,6 +32,7 @@ from ..connection_map import ConnectionMap
 from ..node_set import NodeSet
 from ..id_generator import IDGenerator
 from ..builder_utils import mpi_rank, mpi_size, barrier, check_properties_across_ranks
+from ..connection_map_sorter import order_connection_maps
 
 
 logger = logging.getLogger(__name__)
@@ -514,11 +515,11 @@ class Network(object):
             self._build_nodes()
 
         logger.debug('Building edges.')
-        # for i, conn_map in enumerate(self._connection_maps):
-        for i, conn_map in enumerate(self._connection_maps[mpi_rank::mpi_size]):
+
+        rank_conn_maps = order_connection_maps(self._connection_maps)
+        for i, conn_map in enumerate(rank_conn_maps):
             self._add_edges(conn_map, i)
 
-        # exit()
         self._edges_built = True
 
     def build(self, force=False):
