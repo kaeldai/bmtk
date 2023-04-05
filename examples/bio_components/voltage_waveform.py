@@ -25,30 +25,25 @@ class CreateVoltageWaveform:
         # Stimulation parameters (can be changed but these are the real ones used in the experiments)
         self.period = int(5000/timestep) # 200 Hz stimulation frequency = every 5 ms = 4600us after previous pulse
         self.pulsewidth = int(200/timestep)
-        self.nb_pulses = 1 #40
 
         # Create arrays for the timing
-        self.time = np.linspace(0, self.pulsewidth, self.pulsewidth+1, dtype=int)
-        self.full_time = np.array([])
-        self.full_amplitude = np.array([])
-
+        self.time = np.linspace(0, self.period-1, self.period, dtype=int)
+        self.amplitude = np.zeros(self.period)
+        print(self.time)
         # Create a pulse train
-        for pulse in range(0,self.nb_pulses):
-            for phase in range(0,2):
-                if (phase % 2) == 0:
-                    self.amplitude = self.sample_waveform(phase='cathodic')
-                else:
-                    self.amplitude = self.sample_waveform(phase='anodic')
-
-                # Add the time and amplitude from this one pulse(phase) to the full lists that will be written to the csv file
-                self.full_time = np.append(self.full_time,self.time + phase * self.pulsewidth + pulse * self.period)
-                self.full_amplitude = np.append(self.full_amplitude,self.amplitude)
-
-            self.full_time = np.append(self.full_time, (pulse+1)*self.period)
-            self.full_amplitude = np.append(self.full_amplitude,0)
+        for t in self.time:
+            C = 200E-10 # 200nF
+            R = 10E3   # 10kohm
+            V0 = R * self.current_amplitude * 1E-6 #   V
+            if t < self.pulsewidth:
+                self.amplitude[t] = -V0*(1-np.exp(-t*self.timestep*1E-6/(R*C))) - V0
+            elif t < 2*self.pulsewidth:
+                self.amplitude[t] = V0*(1-np.exp(-(t-self.pulsewidth)*self.timestep*1E-6/(R*C))) + V0
+            else: 
+                self.amplitude[t] = (-V0*(1-np.exp(-(t-2*self.pulsewidth)*self.timestep*1E-6/(R*C))) + V0)*np.exp(-(t-2*self.pulsewidth)*self.timestep*1E-6/(R*C))
 
         # If writing is set to true (default), write_to_csv() will be called
-        # print(self.full_time)
+        # print(self.time)
         if writing == True:
             self.write_to_csv()
 
@@ -105,12 +100,12 @@ class CreateVoltageWaveform:
         name = 'waveform.csv'
 
         # Write the time and amplitude lists to the csv-file
-        df = pd.DataFrame({'time': self.full_time, 'amplitude': self.full_amplitude})
+        df = pd.DataFrame({'time': self.time, 'amplitude': self.amplitude})
         df.to_csv(os.path.join(path,name), sep='\t', index=False)
         return
 
     def plot_waveform(self):
-        plt.plot(self.full_time, self.full_amplitude)
+        plt.plot(np.array([self.time, self.time+max(self.time)]).flatten(), np.array([self.amplitude,self.amplitude]).flatten())
         plt.title("xpto")
         # plt.xlim([0, 2*self.pulsewidth]) # Optional, to focus on 1 pulse only
         plt.show()
