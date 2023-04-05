@@ -44,14 +44,13 @@ stdvs = centroid_cov(
 )
 print(stdvs[0],stdvs[1])
 
-plot_raster('9/config_comsol_z+.json', show=False)
-plot_raster('9/config_comsol_z+_L.json', show=False)
-
+# plot_raster('9/config_comsol_z+.json', show=False)
+# plot_raster('9/config_comsol_z+_L.json', show=False)
 
 plot_activity_2d(
     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
     electrodes_dir = '../bio_components/stimulations/z+.csv',
-    spikes_dir = 'output_comsol/z+_L/spikes.csv',
+    spikes_dir = 'output_comsol_z+/z+_gnd_+-/spikes.csv',
     spikes_bg_dir = 'output/25/spikes.csv',
     v1=True,
     show=False,
@@ -60,42 +59,73 @@ plot_activity_2d(
 
 plot_activity_2d(
     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/x+.csv',
-    spikes_dir = 'output_comsol/x+_L/spikes.csv',
+    electrodes_dir = '../bio_components/stimulations/z+.csv',
+    spikes_dir = 'output_comsol_z+/z+_gnd_+0/spikes.csv',
     spikes_bg_dir = 'output/25/spikes.csv',
     v1=True,
     show=False,
     save_dir='figures/x+'
 )
 
-plot_activity_2d(
-    nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/z-.csv',
-    spikes_dir = 'output_comsol/z-/spikes.csv',
-    spikes_bg_dir = 'output/25/spikes.csv',
-    v1=True,
-    show=False,
-    save_dir='figures/z-'
-)
+# plot_activity_2d(
+#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+#     electrodes_dir = '../bio_components/stimulations/z-.csv',
+#     spikes_dir = 'output_comsol/z-_L/spikes.csv',
+#     spikes_bg_dir = 'output/25/spikes.csv',
+#     v1=True,
+#     show=False,
+#     save_dir='figures/z-'
+# )
 
-plot_activity_2d(
-    nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/x-.csv',
-    spikes_dir = 'output_comsol/x-/spikes.csv',
-    spikes_bg_dir = 'output/25/spikes.csv',
-    v1=True,
-    show=False,
-    save_dir='figures/x-'
-)
+# plot_activity_2d(
+#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+#     electrodes_dir = '../bio_components/stimulations/x-.csv',
+#     spikes_dir = 'output_comsol/x-_L/spikes.csv',
+#     spikes_bg_dir = 'output/25/spikes.csv',
+#     v1=True,
+#     show=False,
+#     save_dir='figures/x-'
+# )
 
-plot_activity_2d(
-    nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-    electrodes_dir = '../bio_components/stimulations/z+x-.csv',
-    spikes_dir = 'output_comsol/z+x-/spikes.csv',
-    spikes_bg_dir = 'output/25/spikes.csv',
-    v1=True,
-    show=True
-)
+# plot_activity_2d(
+#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
+#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
+#     spikes_bg_dir = 'output/25/spikes.csv',
+#     v1=True,
+#     show=True,
+#     save_dir='figures/x+z-'
+# )
+
+# plot_activity_2d(
+#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
+#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
+#     spikes_bg_dir = 'output/25/spikes.csv',
+#     v1=True,
+#     show=True,
+#     save_dir='figures/x+z-'
+# )
+
+# plot_activity_2d(
+#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
+#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
+#     spikes_bg_dir = 'output/25/spikes.csv',
+#     v1=True,
+#     show=True,
+#     save_dir='figures/x+z-'
+# )
+
+# plot_activity_2d(
+#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
+#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
+#     spikes_bg_dir = 'output/25/spikes.csv',
+#     v1=True,
+#     show=True,
+#     save_dir='figures/x+z-'
+# )
 
 # plot_activity_2d(
 #     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
@@ -113,7 +143,7 @@ plot_activity_2d(
 #     spikes_bg_dir = 'output/25/spikes.csv',
 #     v1=True,
 #     show=True
-# )
+# # )
 
 
 plt.show()

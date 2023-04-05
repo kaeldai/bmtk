@@ -42,8 +42,7 @@ lib64
 pip-selfcheck.json
 pyvenv.cfg
 .gitignore
-examples/v1/network
-examples/v1/networks_rebuilt
+examples/v1/network*
 examples/v1/output
 examples/v1/output_comsol
 examples/**/figures

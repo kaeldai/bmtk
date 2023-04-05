@@ -168,3 +168,6 @@ def plot_activity_2d(nodes_dir, electrodes_dir, spikes_dir, save_dir=None, squar
         plt.savefig(save_dir, bbox_inches='tight', transparent=True)
     if show:
         plt.show()
+
+
+# def plot
