@@ -241,6 +241,10 @@ def plot_activity_2d_smooth(nodes_dirs, spikes_dirs, spikes_bg_dirs=None, electr
 
     plt.title('return electrode: ' + spikes_dir[12] + ', stimulation type: ' + spikes_dir[14] + ', amplitude: ' + spikes_dir[16:18] + ' uA')
 
+    if save_dir is not None:
+        if save_dir == True:
+            plt.savefig(spikes_dirs[0][0:4]+'/figures/'+spikes_dirs[0][-19:-11]) 
+
     ax.legend(facecolor='black',framealpha=0.3)
     if show:
         ax.show()
