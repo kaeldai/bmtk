@@ -9,7 +9,7 @@ from bmtk.analyzer.spike_trains import plot_raster, plot_rates_boxplot
 from bio_components.plot import plot_activity_3d, plot_activity_2d, plot_activity_distance, plot_activity_distance
 from bio_components.statistical_analysis import centroid_cov
 
-config_comsol = 'config_comsol_0c.json'
+config_comsol = '9_z+/config_comsol_z+_gnd_+-.json'
 config_xstim = 'xstim/config_xstim_0.json'
 config_file = 'config.json'
 # config_file = 'config.simulation_vm.json'
@@ -26,26 +26,15 @@ config_file = 'config.json'
 
 # plt.show()
 
-# plot_raster(config_file=config_xstim)
+plot_raster(config_file=config_comsol)
 
 stdvs = centroid_cov(
     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-    spikes_dir = 'output_comsol/z+/spikes.csv',
+    spikes_dir = 'output_comsol_z+/z+_gnd_+-/spikes.csv',
     background_dir = 'output/25/spikes.csv',
     v1 = True
 )
 print(stdvs[0],stdvs[1])
-
-stdvs = centroid_cov(
-    nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-    spikes_dir = 'output_comsol/z+_L/spikes.csv',
-    background_dir = 'output/25/spikes.csv',
-    v1 = True
-)
-print(stdvs[0],stdvs[1])
-
-# plot_raster('9/config_comsol_z+.json', show=False)
-# plot_raster('9/config_comsol_z+_L.json', show=False)
 
 plot_activity_2d(
     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
@@ -54,7 +43,6 @@ plot_activity_2d(
     spikes_bg_dir = 'output/25/spikes.csv',
     v1=True,
     show=False,
-    save_dir='figures/z+'
 )
 
 plot_activity_2d(
@@ -64,86 +52,25 @@ plot_activity_2d(
     spikes_bg_dir = 'output/25/spikes.csv',
     v1=True,
     show=False,
-    save_dir='figures/x+'
 )
 
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/z-.csv',
-#     spikes_dir = 'output_comsol/z-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=False,
-#     save_dir='figures/z-'
-# )
+plot_activity_2d(
+    nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+    electrodes_dir = '../bio_components/stimulations/z+.csv',
+    spikes_dir = 'output_comsol_z+/z+_ins_+-/spikes.csv',
+    spikes_bg_dir = 'output/25/spikes.csv',
+    v1=True,
+    show=False,
+)
 
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/x-.csv',
-#     spikes_dir = 'output_comsol/x-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=False,
-#     save_dir='figures/x-'
-# )
-
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
-#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=True,
-#     save_dir='figures/x+z-'
-# )
-
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
-#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=True,
-#     save_dir='figures/x+z-'
-# )
-
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
-#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=True,
-#     save_dir='figures/x+z-'
-# )
-
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/z+x-.csv',
-#     spikes_dir = 'output_comsol/z+x-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=True,
-#     save_dir='figures/x+z-'
-# )
-
-# plot_activity_2d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/x-.csv',
-#     spikes_dir = 'output_comsol/x-_L/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=False
-# )
-
-# plot_activity_3d(
-#     nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
-#     electrodes_dir = '../bio_components/stimulations/x-.csv',
-#     spikes_dir = 'output_comsol/x-/spikes.csv',
-#     spikes_bg_dir = 'output/25/spikes.csv',
-#     v1=True,
-#     show=True
-# # )
+plot_activity_2d(
+    nodes_dir = 'networks_rebuilt/network25/v1_nodes.h5',
+    electrodes_dir = '../bio_components/stimulations/z+.csv',
+    spikes_dir = 'output_comsol_z+/z+_ins_+0/spikes.csv',
+    spikes_bg_dir = 'output/25/spikes.csv',
+    v1=True,
+    show=False,
+)
 
 
 plt.show()

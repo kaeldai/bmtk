@@ -41,6 +41,10 @@ class ComsolMod(SimulatorMod):
         # extract useful information from header row in COMSOL output .txt file. 
         header = pd.read_csv(comsol_file, sep="\s{3,}", header=None, skiprows=8, nrows=1, engine='python').to_numpy()[0] # load header row of .txt file
         header[0] = header[0][2:]                               # remove '% ' before first column name
+        if header[3][3] == 'V':
+            self._unit = 1000
+        elif header[3][3] == 'm':
+            self._unit = 1
         for i,col in enumerate(header):                         # remove superfluous characters before actual time value
             if col[0] == "V":
                 if self._waveform is None:
@@ -114,6 +118,6 @@ class ComsolMod(SimulatorMod):
                 tstep = tstep % T                       # In case of periodic stimulation
                 v_ext = L*self._waveform.calculate(tstep+1)
 
-            v_ext *= self._amplitude
+            v_ext *= self._amplitude * self._unit
 
             cell.set_e_extracellular(h.Vector(v_ext))

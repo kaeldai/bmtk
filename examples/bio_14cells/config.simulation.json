@@ -46,7 +46,7 @@
 
   "reports": {
     "calcium_concentration": {
-      "cells": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "cells": "all",
       "variable_name": "cai",
       "module": "membrane_report",
       "sections": "soma"
