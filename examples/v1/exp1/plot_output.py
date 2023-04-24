@@ -52,12 +52,14 @@ for t in [200]:
         v1=True,
         show=False,
         t_stop=t,
+        save_dir=True
     )
 
     grid2 = plot_activity_2d_smooth(**plotting_params('7','-','30',['0','1','2']),
         v1=True,
         show=False,
         t_stop=t,
+        save_dir=True
     )
 
     fig = plt.figure(figsize=(9,12))
@@ -75,7 +77,7 @@ for t in [200]:
 
 
     ax1.imshow(grid)
-    
+
     ax2 = plt.subplot(1,2,2)
     grid = grid2-grid1
     ax2.imshow(grid)
