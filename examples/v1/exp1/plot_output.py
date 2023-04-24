@@ -48,14 +48,14 @@ config_file = 'config.json'
 # )
 
 for t in [200]: 
-    grid1 = plot_activity_2d_smooth(**plotting_params('1','-','30',['0','1','2']),
+    grid1 = plot_activity_2d_smooth(**plotting_params('2','-','30',['0','1','2']),
         v1=True,
         show=False,
         t_stop=t,
         save_dir=True
     )
 
-    grid2 = plot_activity_2d_smooth(**plotting_params('7','-','30',['0','1','2']),
+    grid2 = plot_activity_2d_smooth(**plotting_params('6','-','30',['0','1','2']),
         v1=True,
         show=False,
         t_stop=t,
