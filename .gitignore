@@ -49,3 +49,4 @@ examples/**/figures
 !examples/comsol/**
 examples/comsol/**/ecp_contributions
 !examples/v1/figures
+!examples/v1/exp*/figures
