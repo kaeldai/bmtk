@@ -5,7 +5,9 @@ import numpy as np
 import logging
 import cProfile, pstats
 import matplotlib.pyplot as plt
-from memory_profiler import memory_usage, LogFile, profile
+from memory_profiler import memory_usage, LogFile, profile, LineProfiler, show_results
+import psutil
+from functools import partial
 
 from bmtk.builder import NetworkBuilder
 
@@ -49,6 +51,8 @@ connect_props = {
 }
 
 
+
+# @profile(stream=fp)
 @profile
 def build_network(n_nodes=6000, iterator='one_to_one'):
     np.random.seed(100)
@@ -87,13 +91,30 @@ def setup_logger(n_nodes, iterator, version, profiler):
     file_logger.setLevel(logging.DEBUG)
     logger.addHandler(file_logger)
 
-
+    
 def profile_mem(n_nodes, iterator, version):
     setup_logger(n_nodes, iterator, version, 'mem')
     logger.info('---PROFILING MEMORY---')
-    sys.stdout = LogFile()
+    
+    # show_results_bound = partial(show_results)
 
-    mem = memory_usage((build_network, (n_nodes, iterator)))
+    # profiler = LineProfiler()
+    # prof_fnc = profiler(build_network)
+    # prof_fnc(n_nodes, iterator)
+    # show_results(profiler)
+
+    fp = open('memory_profiler.log','w+')
+
+    def add_profiler(*args, **kwargs):
+        profiler = LineProfiler(include_children=True)
+        prof_fnc = profiler(build_network)
+        val = prof_fnc(*args, **kwargs)
+        show_results(profiler, stream=fp)
+        return val
+
+    # mem = memory_usage((build_network, (n_nodes, iterator)))
+    mem = memory_usage((add_profiler, (n_nodes, iterator)))
+    print(np.max(mem))
 
     logger.setLevel(logging.INFO)
     rank_str = '' if mpi_size < 2 else '.rank{}'.format(mpi_rank)
@@ -116,13 +137,19 @@ def profile_stats(n_nodes, iterator, version):
     ps.dump_stats(f'runtime_profile.{n_nodes}nodes.{iterator}.{version}.stats')
 
 
+def profile_psutil(n_nodes, iterator, version):
+    build_network(n_nodes=n_nodes, iterator=iterator)
+    process = psutil.Process()
+    print(process.memory_info().rss/(1024.0**2)) 
+
+
 if __name__ == '__main__':
     version = 'fix_iterator'
-    n_nodes = 5000
+    n_nodes = 1000
     # iterator = 'one_to_one'
     iterator = 'all_to_one'
     
-
-    # profile_mem(n_nodes=n_nodes, iterator=iterator, version=version)
-    profile_stats(n_nodes=n_nodes, iterator=iterator, version=version)
+    profile_mem(n_nodes=n_nodes, iterator=iterator, version=version)
+    # profile_stats(n_nodes=n_nodes, iterator=iterator, version=version)
+    # profile_psutil(n_nodes=n_nodes, iterator=iterator, version=version)
     # check_edges()
