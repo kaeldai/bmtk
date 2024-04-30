@@ -34,6 +34,8 @@ class BioNode(SonataBaseNode):
 
     @property
     def morphology_file(self):
+        if 'morphology' not in self._node:
+            return None
         return self._node['morphology']
 
     @property

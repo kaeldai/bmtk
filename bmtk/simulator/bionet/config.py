@@ -39,7 +39,12 @@ class Config(SimulationConfig):
         io.setup_output_dir(self.output_dir, self.log_file)
 
     def load_nrn_modules(self):
-        nrn.load_neuron_modules(self.mechanisms_dir, self.templates_dir)
+        nrn.load_neuron_modules(
+            mechanisms_dir=self.mechanisms_dir, 
+            templates_dir=self.templates_dir, 
+            default_templates=self.use_default_templates,
+            use_old_import3d=self.use_old_import3d
+        )
 
     def build_env(self):
         self.io = io
@@ -52,3 +57,8 @@ class Config(SimulationConfig):
 
         pc.barrier()
         self.load_nrn_modules()
+
+    def _set_class_props(self):
+        super(Config, self)._set_class_props()
+        self.use_old_import3d = self.run.get('use_old_import3d', False)
+        self.use_default_templates = self.run.get('use_old_import3d', True)
