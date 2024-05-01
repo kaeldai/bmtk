@@ -63,7 +63,7 @@ class _LazySegmentProps(object):
 
             for sec_id, sec in enumerate(self._hobj.all):
                 fullsecname = sec.name()
-                sec_type = fullsecname.split(".")[1][:4]  # get sec name type without the cell name
+                sec_type = fullsecname.split(".")[-1][:4]  # get sec name type without the cell name
                 sec_type_swc = Morphology.sec_type_swc[sec_type]  # convert to swc code
                 x_range = 1.0 / (sec.nseg * 2)  # used to calculate [x0, x1]
 
