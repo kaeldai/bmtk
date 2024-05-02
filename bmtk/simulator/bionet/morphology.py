@@ -26,6 +26,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from neuron import h
+import neuron
 
 from bmtk.simulator.bionet.io_tools import io
 
@@ -35,8 +36,9 @@ pc = h.ParallelContext()  # object to access MPI methods
 
 class _LazySegmentProps(object):
     """A Struct for storing coordinate invariant properties of each segment of a cell."""
-    def __init__(self, hobj):
-        self._hobj = hobj
+    def __init__(self, morphology):
+        self._morphology = morphology
+        self._hobj = morphology.hobj
         self.sec_id = None
         self.type = None
         self.area = None
@@ -59,7 +61,7 @@ class _LazySegmentProps(object):
             seg_length = []
             seg_sec_id = []
 
-            h.distance(sec=self._hobj.soma[0])  # measure distance relative to the soma
+            h.distance(sec=self._morphology.soma[0])  # measure distance relative to the soma
 
             for sec_id, sec in enumerate(self._hobj.all):
                 fullsecname = sec.name()
@@ -99,8 +101,8 @@ class _LazySegmentProps(object):
 
 class _LazySegmentCoords(object):
     """A Struct for storing properties of each segment of a cell that vary by soma position and rotation."""
-    def __init__(self, hobj):
-        self._hobj = hobj
+    def __init__(self, morphology):
+        self._hobj = morphology.hobj
         self.p0 = None
         self.p1 = None
         self.p05 = None
@@ -235,14 +237,25 @@ class Morphology(object):
         self._prng = np.random.RandomState(self.rng_seed)
         self._sections = None
         self._segments = None
-        self._seg_props = _LazySegmentProps(self.hobj)  # None
-        self._seg_coords = _LazySegmentCoords(self.hobj)  # None
+        self._seg_props = _LazySegmentProps(self)  # None
+        self._seg_coords = _LazySegmentCoords(self)  # None
         self._nseg = None
         self._swc_map = None
+        self._soma = None # 
 
         # Used by find_sections() and other methods when building edges/synapses. Should make it faster to look-up
         # cooresponding segments for a large number of syns that target the same area of a cell
         self._trg_segs_cache = {}
+
+    @property
+    def soma(self):
+        if self._soma is None:
+            if isinstance(self.hobj.soma, (neuron.nrn.Section, neuron.nrn.Segment)):
+                self._soma = [self.hobj.soma]
+            else:
+                self._soma = self.hobj.soma
+
+        return self._soma
 
     def _copy(self):
         new_morph = Morphology(hobj=self.hobj, swc_path=self.swc_path)
