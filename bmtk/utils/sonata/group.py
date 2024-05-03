@@ -145,6 +145,10 @@ class Group(object):
         """Search that a column name exists in this group"""
         return prop_name in self._group_column_names
 
+    def __repr__(self):
+        rep = f'<SONATA population subgroup: {self.parent.name}/{self.group_id}>'
+        return rep
+
 
 class NodeGroup(Group):
     def __init__(self, group_id, h5_group, parent):
