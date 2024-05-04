@@ -326,6 +326,7 @@ class BioSimulator(Simulator):
             if sim_input.input_type == 'syn_activity':
                 network.set_spont_syn_activity(
                     precell_filter=sim_input.params['precell_filter'],
+                    postcell_filter=sim_input.params.get('postcell_filter', {}),
                     timestamps=sim_input.params['timestamps']
                 )
 

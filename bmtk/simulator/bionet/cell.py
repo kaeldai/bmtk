@@ -110,5 +110,8 @@ class Cell(object):
     def get_section(self, sec_name, sec_index):
         raise NotImplementedError
 
+    def __contains__(self, node_prop):
+        return node_prop in self._node
+    
     def __getitem__(self, node_prop):
         return self._node[node_prop]

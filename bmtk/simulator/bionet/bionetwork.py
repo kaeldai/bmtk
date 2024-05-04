@@ -77,7 +77,8 @@ class BioNetwork(SimNetwork):
         self._gid_pool = GidPool()
 
         self.has_spont_syns = False
-        self.spont_syns_filter = None
+        self.spont_syns_filter_pre = None
+        self.spont_syns_filter_post = None
         self.spont_syns_times = None
 
     @property
@@ -88,7 +89,7 @@ class BioNetwork(SimNetwork):
     def py_function_caches(self):
         return nrn
 
-    def set_spont_syn_activity(self, precell_filter, timestamps):
+    def set_spont_syn_activity(self, precell_filter, postcell_filter, timestamps):
         self._model_type_map = {
             'biophysical': BioCellSpontSyn,
             'point_process': PointProcessCellSpontSyns,
@@ -98,7 +99,8 @@ class BioNetwork(SimNetwork):
         }
 
         self.has_spont_syns = True
-        self.spont_syns_filter = precell_filter
+        self.spont_syns_filter_pre = precell_filter
+        self.spont_syns_filter_post = postcell_filter
         self.spont_syns_times = timestamps
 
     def get_node_id(self, population, node_id):

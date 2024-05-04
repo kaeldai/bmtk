@@ -132,7 +132,8 @@ class PointProcessCellSpontSyns(PointProcessCell):
         self._vecstim = h.VecStim()
         self._vecstim.play(self._spike_trains)
 
-        self._precell_filter = bionetwork.spont_syns_filter
+        self._precell_filter = bionetwork.spont_syns_filter_pre
+        self._postcell_filter = bionetwork.spont_syns_filter_post
         assert(isinstance(self._precell_filter, dict))
 
     def _matches_filter(self, src_node):
@@ -143,6 +144,22 @@ class PointProcessCellSpontSyns(PointProcessCell):
             else:
                 if src_node[k] != v:
                     return False
+        
+        trg_node = trg_node or self
+        for k, v in self._postcell_filter.items():
+            # Some key may not show up as node_variable
+            if k == 'population' and k not in trg_node:
+                key_val = trg_node._node.population_name
+            else:
+                key_val = trg_node[k]
+
+            if isinstance(v, (list, tuple)):
+                if key_val not in v:
+                    return False
+            else:
+                if key_val != v:
+                    return False
+        
         return True
 
     def set_syn_connection(self, edge_prop, src_node, stim=None):
