@@ -70,12 +70,14 @@ class _PyFunctions(object):
         self.__cell_models = {}
         self.__synapse_models = {}
         self.__cell_processors = {}
+        self.__spikes_generators = {}
 
     def clear(self):
         self.__syn_weights.clear()
         self.__cell_models.clear()
         self.__synapse_models.clear()
         self.__cell_processors.clear()
+        self.__spikes_generators.clear()
 
     def add_synaptic_weight(self, name, func, overwrite=True):
         """stores synaptic function for given name"""
@@ -156,6 +158,17 @@ class _PyFunctions(object):
     def add_cell_processor(self, name, func, overwrite=True):
         if overwrite or name not in self.__syn_weights:
             self.__cell_processors[name] = func
+   
+    @property
+    def spikes_generators(self):
+        return self.__spikes_generators.keys()
+    
+    def spikes_generator(self, name):
+        return self.__spikes_generators[name]
+    
+    def add_spikes_generator(self, name, func, overwrite=True):
+        if overwrite or name not in self.__spikes_generators:
+            self.__spikes_generators[name] = func
 
     def __repr__(self):
         rstr = '{}: {}\n'.format('cell_models', self.cell_models)
@@ -301,6 +314,31 @@ def model_processing(*wargs, **wkwargs):
         return decorator
 
 
+def spikes_generator(*wargs, **wkwargs):
+    if len(wargs) == 1 and callable(wargs[0]):
+        # for the case without decorator arguments, grab the function object in wargs and create a decorator
+        func = wargs[0]
+        py_modules.add_spikes_generator(func.__name__, func)  # add function assigned to its original name
+
+        @wraps(func)
+        def func_wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        return func_wrapper
+    else:
+        # for the case with decorator arguments
+        assert(all(k in ['name'] for k in wkwargs.keys()))
+
+        def decorator(func):
+            # store the function in py_modules but under the name given in the decorator arguments
+            py_modules.add_spikes_generator(wkwargs['name'], func)
+
+            @wraps(func)
+            def func_wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+            return func_wrapper
+        return decorator
+
+
 def add_weight_function(func, name=None, overwrite=True):
     assert(callable(func))
     func_name = name if name is not None else func.__name__
@@ -322,6 +360,12 @@ def add_synapse_model(func, name=None, overwrite=True):
     assert (callable(func))
     func_name = name if name is not None else func.__name__
     py_modules.add_synapse_model(func_name, func, overwrite)
+
+
+def add_spikes_generator(func, name=None, overwrite=True):
+    assert(callable(func))
+    func_name = name if name is not None else func.__name__
+    py_modules.add_spikes_generator(func_name, func, overwrite)
 
 
 def load_py_modules(cell_models=None, syn_models=None, syn_weights=None, cell_processors=None):
