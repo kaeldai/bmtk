@@ -2,10 +2,12 @@ import os
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
+from decimal import Decimal
 
 from bmtk.utils.sonata.config import SonataConfig
 from bmtk.simulator.utils import simulation_reports
-# from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
+from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
+import matplotlib.font_manager as fm
 
 
 def _get_ecp_path(ecp_path=None, config=None, report_name=None):
@@ -55,30 +57,54 @@ def plot_ecp(config_file=None, report_name=None, ecp_path=None, title=None, show
     channels = ecp_h5['/ecp/channel_id'][()]
     fig, axes = plt.subplots(len(channels), 1)
     fig.text(0.04, 0.5, 'channel id', va='center', rotation='vertical')
+    v_min, v_max = ecp_h5['/ecp/data'][()].min(), ecp_h5['/ecp/data'][()].max()
+    # print(v_max - v_min)
+    # exit()
+    
     for idx, channel in enumerate(channels):
         data = ecp_h5['/ecp/data'][:, idx]
+        # print(channel, np.min(data), np.max(data))
         axes[idx].plot(time_traces, data)
         axes[idx].spines["top"].set_visible(False)
         axes[idx].spines["right"].set_visible(False)
         axes[idx].set_yticks([])
         axes[idx].set_ylabel(channel)
+        axes[idx].set_ylim([v_min, v_max])
 
         if idx+1 != len(channels):
             axes[idx].spines["bottom"].set_visible(False)
             axes[idx].set_xticks([])
         else:
             axes[idx].set_xlabel('timestamps (ms)')
-            # scalebar = AnchoredSizeBar(axes[idx].transData,
-            #                            2.0, '1 mV', 1,
-            #                            pad=0,
-            #                            borderpad=0,
-            #                            # color='b',
-            #                            frameon=True,
-            #                            # size_vertical=1.001,
-            #                            # fontproperties=fontprops
-            #                            )
-            #
-            # axes[idx].add_artist(scalebar)
+        
+        
+        if idx == 0:
+            scale_bar_size = (v_max-v_min)/2.0
+            scale_bar_label = f'{scale_bar_size:.2E}'
+            # print(scale_bar_label)
+            # exit()
+            fontprops = fm.FontProperties(size='x-small')
+
+            scalebar = AnchoredSizeBar(
+                axes[idx].transData,
+                size=scale_bar_size, 
+                label=scale_bar_label, 
+                loc='upper right',
+                pad=0.1,
+                borderpad=0.5,
+                sep=5,
+                # color='b',
+                frameon=False,
+                size_vertical=scale_bar_size,
+                # size_vertical=1.001,
+                fontproperties=fontprops
+            )            
+            axes[idx].add_artist(scalebar)
+
+            # label = scalebar.txt_label
+            # label.set_rotation(270.0)
+            # label.set_verticalalignment('bottom')
+            # label.set_horizontalalignment('left') 
 
     if title:
         fig.set_title(title)

@@ -454,7 +454,7 @@ class Morphology(object):
             new_soma_pos = soma_coords
 
         # new_seg_coords = SegmentCoords(p0=new_p0, p1=new_p1, p05=new_p05, soma_pos=new_soma_pos)
-        new_seg_coords = _LazySegmentCoords(self.hobj)
+        new_seg_coords = _LazySegmentCoords(self)
         new_seg_coords.p0 = new_p0
         new_seg_coords.p05 = new_p05
         new_seg_coords.p1 = new_p1
