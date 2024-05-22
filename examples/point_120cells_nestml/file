@@ -1,0 +1,4 @@
+Warning: PyGSL is not available. The stiffness test will be skipped.
+Warning: No module named 'pygsl'
+
+
