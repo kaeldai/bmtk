@@ -32,7 +32,7 @@ from bmtk.utils.reports.spike_trains.spike_trains import SpikeTrains
 class VirtualCell(object):
     """Representation of a Virtual/External node"""
 
-    def __init__(self, node, population, spike_train_dataset, spikes_generator, sim=None):
+    def __init__(self, node, population, spike_train_dataset, spikes_generator=None, sim=None):
         # VirtualCell is currently not a subclass of bionet.Cell class b/c the parent has a bunch of properties that
         # just don't apply to a virtual cell. May want to make bionet.Cell more generic in the future.
         self._node_id = node.node_id
