@@ -23,6 +23,7 @@
 import sys
 import os
 import glob
+from pathlib import Path
 import neuron
 from neuron import h
 
@@ -88,17 +89,25 @@ def load_neuron_modules(mechanisms_dir, templates_dir, default_templates=True, u
         load_templates(templates_dir)
 
 
-def load_templates(template_dir):
+def load_templates(templates):
     """Load all templates to be available in the hoc namespace for instantiating cells"""
     cwd = os.getcwd()
-    os.chdir(template_dir)
-
-    hoc_templates = glob.glob("*.hoc")
-
-    for hoc_template in hoc_templates:
-        h.load_file(str(hoc_template))
-
-    os.chdir(cwd)
+    templates_list = templates if isinstance(templates, (list, tuple)) else [templates]
+    for templates_cont in templates_list:
+        if Path(templates_cont).is_dir():
+            # If string is a path to a directory, find all hoc files and load them in one at a time.
+            # TODO: Add option to sort before loading
+            os.chdir(templates_cont)
+            hoc_templates = glob.glob("*.hoc")
+            for hoc_template in hoc_templates:
+                h.load_file(str(hoc_template))
+            os.chdir(cwd)
+            
+        elif Path(templates_cont).is_file():
+            # Otherwise if just a file, eg .hoc, load it in separartly.
+            h.load_file(str(templates_cont))
+        else:
+            io.log_warning(f'Unable to find and load {templates_cont} templates. Please ensure it is a valid directory or hoc file!', display_once=True)
 
 
 def reset():
