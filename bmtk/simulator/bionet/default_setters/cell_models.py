@@ -23,6 +23,7 @@
 import os
 import numpy as np
 from neuron import h
+import inspect
 try:
     from sklearn.decomposition import PCA
 except Exception as e:
@@ -41,19 +42,46 @@ loaded with Cell-Types json files or their NeuroML equivelent, but may be overri
 """
 
 def loadHOC(cell, template_name, dynamics_params):
-    # Get template to instantiate
-    template_call = getattr(h, template_name)
-    if dynamics_params is not None and 'params' in dynamics_params:
-        template_params = dynamics_params['params']
-        if isinstance(template_params, list):
-            # pass in a list of parameters
-            hobj = template_call(*template_params)
+    """A Generic function for creating a cell object from a NEURON HOC Template (eg. a *.hoc file with 
+    `begintemplate template_name` in header). It essentially tries to guess the correct parameters that need to be
+    called so may not work the majority of the times and require to be overloaded.
+
+    :param cell: A SONATA node object, can be used as a dict to get individual properties of current cell.
+    :param template_name: name of HOCTemplate as stored in "model_template" attribute (hoc:<template_name>).
+    :param dynamics_params: Dictionary containing contents of cell['dynamics_params'] as loaded from a json file or hdf5. 
+        If cell does not have "dynamics_params" attributes then will be set to None.
+    """
+    try:
+        # Get template to instantiate
+        template_call = getattr(h, template_name)
+    except AttributeError as ae:
+        io.log_error(
+            f'loadHOC was unable to load in Neuron HOC Template "{template_name}, ' 
+            'Make sure appropiate .hoc file is stored in templates_dir.'
+        )
+        raise ae
+
+    try:
+        if dynamics_params is not None and 'params' in dynamics_params:
+            template_params = dynamics_params['params']
+            if isinstance(template_params, list):
+                # pass in a list of parameters
+                hobj = template_call(*template_params)
+            else:
+                # only a single parameter
+                hobj = template_call(template_params)
+        elif cell.morphology_file is not None:
+            # instantiate template with no parameters
+            hobj = template_call(cell.morphology_file)
         else:
-            # only a single parameter
-            hobj = template_call(template_params)
-    else:
-        # instantiate template with no parameters
-        hobj = template_call()
+            hobj = template_call()
+    except RuntimeError as rte:
+        io.log_error(
+            f'bmtk.simualtor.bionet.default_setters.cell_models.loadHOC function failed to load HOC template "{template_call}". '
+            'If Hoc Templates requires special call to be initialized consider using `bmtk.simulator.bionet.add_cell_model()` '
+            'to overwrite this function.'
+        )
+        raise rte
 
     # TODO: All "all" section if it doesn't exist
     # hobj.all = h.SectionList()

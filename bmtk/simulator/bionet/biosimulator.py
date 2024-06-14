@@ -326,6 +326,7 @@ class BioSimulator(Simulator):
             if sim_input.input_type == 'syn_activity':
                 network.set_spont_syn_activity(
                     precell_filter=sim_input.params['precell_filter'],
+                    postcell_filter=sim_input.params.get('postcell_filter', {}),
                     timestamps=sim_input.params['timestamps']
                 )
 
@@ -346,13 +347,30 @@ class BioSimulator(Simulator):
 
         # TODO: Need to create a gid selector
         for sim_input in inputs.from_config(config):
-            if sim_input.input_type == 'spikes' and sim_input.module in ['nwb', 'csv', 'sonata']:
+            if sim_input.input_type == 'spikes' and sim_input.module in ['nwb', 'csv', 'sonata', 'h5']:
                 io.log_info('Building virtual cell stimulations for {}'.format(sim_input.name))
                 path = sim_input.params['input_file']
                 spikes = SpikeTrains.load(path=path, file_type=sim_input.module, **sim_input.params)
                 # node_set_opts = sim_input.params.get('node_set', 'all')
                 node_set = network.get_node_set(sim_input.node_set)
-                network.add_spike_trains(spikes, node_set)
+                network.add_spike_trains(
+                    spike_trains=spikes, 
+                    node_set=node_set,
+                    spikes_generator=None,
+                    sim=sim
+                )
+
+            elif sim_input.input_type == 'spikes' and sim_input.module == 'function':
+                io.log_info('Building virtual cell stimulations for {}'.format(sim_input.name))
+                # path = sim_input.params.get['input_file']
+                spikes_generator = sim_input.params['spikes_function']
+                node_set = network.get_node_set(sim_input.node_set)
+                network.add_spike_trains(
+                    spike_trains=None, 
+                    node_set=node_set, 
+                    spikes_generator=spikes_generator,
+                    sim=sim
+                )
 
             elif sim_input.module == 'IClamp':
                 sim.add_mod(mods.IClampMod(input_type=sim_input.input_type, **sim_input.params))

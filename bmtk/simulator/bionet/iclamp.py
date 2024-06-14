@@ -38,8 +38,10 @@ class IClamp(object):
 
     def attach_current(self, cell):
         # self._stim = h.IClamp(cell.hobj.soma[0](0.5))
-        hboj_sec = getattr(cell.hobj, self._section_name)[self._section_index](self._section_dist)
-        self._stim = h.IClamp(hboj_sec)
+        # hboj_sec = getattr(cell.hobj, self._section_name)[self._section_index](self._section_dist)
+        hobj_sec = cell.get_section(sec_name=self._section_name, sec_index=self._section_index)(self._section_dist)
+
+        self._stim = h.IClamp(hobj_sec)
         self._stim.delay = self._iclamp_del
         self._stim.dur = self._iclamp_dur
         self._stim.amp = self._iclamp_amp
@@ -47,13 +49,19 @@ class IClamp(object):
 
 
 class FileIClamp(object):
-    def __init__(self, amplitudes, dt):
+    def __init__(self, amplitudes, dt, section_name='soma', section_index=0, section_dist=0.5):
         self._iclamp_amps = amplitudes
         self._iclamp_dt = dt
         self._stim = None
 
+        self._section_name = section_name
+        self._section_index = section_index
+        self._section_dist = section_dist
+
     def attach_current(self, cell):
-        self._stim = h.IClamp(cell.hobj.soma[0](0.5))
+        hobj_sec = cell.get_section(sec_name=self._section_name, sec_index=self._section_index)(self._section_dist)
+
+        self._stim = h.IClamp(hobj_sec)
 
         # Listed as necessary values in the docs to use play() with an IClamp.
         self._stim.delay = 0

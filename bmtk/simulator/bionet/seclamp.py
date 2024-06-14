@@ -31,6 +31,7 @@ class SEClamp(object):
         self._stim = None
 
     def attach_current(self, cell):
+        # TODO: Make sure to 
         self._stim = h.SEClamp(cell.hobj.soma[0](0.5))
         self._stim.dur1 = self._seclamp_durs[0]
         self._stim.dur2 = self._seclamp_durs[1]

@@ -314,7 +314,8 @@ class SomaReport(MembraneReport):
             pop_id = self._gid_map.get_pool_id(gid)
             cell = sim.net.get_cell_gid(gid)
             for var_name in self._variables:
-                var_val = getattr(cell.hobj.soma[0](0.5), var_name)
+                var_val = getattr(cell.soma[0](0.5), var_name)
+                # var_val = getattr(cell.soma(0.5), var_name)
                 self._var_recorder.record_cell(
                     pop_id.node_id,
                     population=pop_id.population,
@@ -323,7 +324,8 @@ class SomaReport(MembraneReport):
                 )
 
             for var_name, fnc in self._transforms.items():
-                var_val = getattr(cell.hobj.soma[0](0.5), var_name)
+                # var_val = getattr(cell.hobj.soma[0](0.5), var_name)
+                var_val = getattr(cell.soma(0.5), var_name)
                 new_val = fnc(var_val)
                 self._var_recorder.record_cell(
                     pop_id.node_id,

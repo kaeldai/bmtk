@@ -237,7 +237,7 @@ class PointSimulator(Simulator):
                 os.remove(gfile)
 
         for sim_input in inputs.from_config(config):
-            if sim_input.input_type == 'spikes' and sim_input.module in ['nwb', 'csv', 'sonata', 'h5', 'hdf5']:
+            if sim_input.input_type == 'spikes' and sim_input.module in ['nwb', 'csv', 'sonata', 'h5', 'hdf5', 'function']:
                 network.add_mod(mods.SpikesInputsMod(
                     name=sim_input.name,
                     input_type=sim_input.input_type,

@@ -123,6 +123,9 @@ class IClampMod(iclamp.IClampMod):
         self._section_index = mod_args.get('section_index', 0)
         self._section_dist = mod_args.get('section_dist', 0.5)
 
+        # Check f section_index is a range (ie. "section_index": [500.0, 1000.0])
+        self._ranged_index = isinstance(self._section_index, (list, tuple))
+
         # IClamp objects need to be saved in memory otherwise NRN will try to garbage collect them
         # prematurly
         self._iclamps = []
@@ -132,7 +135,23 @@ class IClampMod(iclamp.IClampMod):
         select_gids = list(sim.net.get_node_set(self._node_set).gids())
         gids_on_rank = list(set(select_gids) & set(sim.local_gids))
 
-        for gid in gids_on_rank:
+        for gid in gids_on_rank:           
             cell = sim.net.get_cell_gid(gid)
-            hobj_sec = getattr(cell.hobj, self._section_name)[self._section_index](self._section_dist)
+            
+            if self._ranged_index:
+                hobj_sec = self._find_section(cell)
+            else:
+                hobj_sec = getattr(cell.hobj, self._section_name)[self._section_index](self._section_dist)
+            
             self._iclamps.extend(self._amp_reader.create_clamps(hobj_sec))
+
+
+    def _find_section(self, cell):
+        secs_list = self._section_name if isinstance(self._section_name, (list, tuple)) else [self._section_name]        
+        seg_idx, _ = cell.morphology.choose_sections(
+            section_names=secs_list,
+            distance_range=self._section_index,
+            n_sections=1
+        )
+
+        return cell.morphology.segments[seg_idx[0]]

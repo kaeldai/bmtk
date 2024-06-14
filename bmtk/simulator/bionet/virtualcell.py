@@ -25,13 +25,14 @@ import numpy as np
 import pandas as pd
 
 from bmtk.simulator.bionet.io_tools import io
+from bmtk.simulator.bionet.pyfunction_cache import py_modules
 from bmtk.utils.reports.spike_trains.spike_trains import SpikeTrains
 
 
 class VirtualCell(object):
     """Representation of a Virtual/External node"""
 
-    def __init__(self, node, population, spike_train_dataset):
+    def __init__(self, node, population, spike_train_dataset, spikes_generator=None, sim=None):
         # VirtualCell is currently not a subclass of bionet.Cell class b/c the parent has a bunch of properties that
         # just don't apply to a virtual cell. May want to make bionet.Cell more generic in the future.
         self._node_id = node.node_id
@@ -40,7 +41,15 @@ class VirtualCell(object):
         self._hobj = None
         self._spike_train_dataset = spike_train_dataset
         self._train_vec = []
-        self.set_stim(node, self._spike_train_dataset)
+        self._sim = sim
+        
+        if spike_train_dataset is not None:
+            self.set_stim(node, self._spike_train_dataset)
+        elif spikes_generator is not None:
+            self.set_stim_from_generator(node, spikes_generator)
+        else:
+            io.log_exception('Could not find source of spikes-trains (eg file or generator function)'
+                            f' for virtual cell #{self._node_id} from {self._population}')
         
     @property
     def node_id(self):
@@ -72,6 +81,17 @@ class VirtualCell(object):
 
         spikes = np.sort(spikes)  # sort the spikes for NEURON, will throw a segfault if not sorted
 
+        self._train_vec = h.Vector(spikes)
+        vecstim = h.VecStim()
+        vecstim.play(self._train_vec)
+        self._hobj = vecstim
+
+    def set_stim_from_generator(self, node, spikes_generator):
+        if spikes_generator not in py_modules.spikes_generators:
+            io.log_exception(f'Could not find @spikes_generator function "{spikes_generator}". Unable to load spikes for virtual cell {self._node_id}')
+        spikes_func = py_modules.spikes_generator(name=spikes_generator)
+        spikes = spikes_func(self._node, self._sim)
+        
         self._train_vec = h.Vector(spikes)
         vecstim = h.VecStim()
         vecstim.play(self._train_vec)

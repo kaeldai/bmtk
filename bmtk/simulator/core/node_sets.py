@@ -52,6 +52,11 @@ class NodeSet(object):
     def nodes(self):
         return None
 
+    def fetch_nodes(self):
+        for pop in self._populations:
+            for node in pop.filter(self._filter):
+                yield node
+
 
 class NodeSetAll(NodeSet):
     def __init__(self, network):

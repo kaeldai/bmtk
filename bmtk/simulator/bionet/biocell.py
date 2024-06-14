@@ -27,6 +27,7 @@ from bmtk.simulator.bionet.io_tools import io
 from bmtk.simulator.bionet.morphology import Morphology
 import six
 
+import neuron
 from neuron import h
 
 pc = h.ParallelContext()    # object to access MPI methods
@@ -74,9 +75,6 @@ class BioCell(Cell):
     def __init__(self, node, population_name, bionetwork):
         super(BioCell, self).__init__(node=node, population_name=population_name, network=bionetwork)
 
-        # Set up netcon object that can be used to detect and communicate cell spikes.
-        self.set_spike_detector(bionetwork.spike_threshold)
-
         # Determine number of segments and store a list of all sections.
         self._secs = []
         self._secs_by_id = []
@@ -105,6 +103,10 @@ class BioCell(Cell):
         self._seg_coords = None
         self.build_morphology()
 
+        # Set up netcon object that can be used to detect and communicate cell spikes.
+        self.set_spike_detector(bionetwork.spike_threshold)
+
+
     def build_morphology(self):
         morph_base = Morphology.load(hobj=self.hobj, morphology_file=self.morphology_file, cache_seg_props=True)
 
@@ -127,6 +129,10 @@ class BioCell(Cell):
         return self._morphology
 
     @property
+    def soma(self):
+        return self.morphology.soma
+
+    @property
     def seg_coords(self):
         """Coordinates for segments/sections of the morphology, need to make public for ecp, xstim, and other
         functionality that needs to compute the soma/dendritic coordinates of each cell"""
@@ -144,7 +150,7 @@ class BioCell(Cell):
         return self.morphology.seg_coords
 
     def set_spike_detector(self, spike_threshold):
-        nc = h.NetCon(self.hobj.soma[0](0.5)._ref_v, None, sec=self.hobj.soma[0])  # attach spike detector to cell
+        nc = h.NetCon(self.soma[0](0.5)._ref_v, None, sec=self.soma[0])
         nc.threshold = spike_threshold
         pc.cell(self.gid, nc)  # associate gid with spike detector
 
@@ -437,18 +443,41 @@ class BioCellSpontSyn(BioCell):
         self._vecstim = h.VecStim()
         self._vecstim.play(self._spike_trains)
 
-        self._precell_filter = bionetwork.spont_syns_filter
+        self._precell_filter = bionetwork.spont_syns_filter_pre
+        self._postcell_filter = bionetwork.spont_syns_filter_post
         assert(isinstance(self._precell_filter, dict))
 
-    def _matches_filter(self, src_node):
+    def _matches_filter(self, src_node, trg_node=None):
         """Check to see if the presynaptic cell matches the criteria specified"""
         for k, v in self._precell_filter.items():
+            # Some key may not show up as node_variable
+            if k == 'population' and k not in src_node:
+                key_val = src_node.population_name
+            else:
+                key_val = src_node[k]
+
             if isinstance(v, (list, tuple)):
-                if src_node[k] not in v:
+                if key_val not in v:
                     return False
             else:
-                if src_node[k] != v:
+                if key_val != v:
                     return False
+        
+        trg_node = trg_node or self
+        for k, v in self._postcell_filter.items():
+            # Some key may not show up as node_variable
+            if k == 'population' and k not in trg_node:
+                key_val = trg_node._node.population_name
+            else:
+                key_val = trg_node[k]
+
+            if isinstance(v, (list, tuple)):
+                if key_val not in v:
+                    return False
+            else:
+                if key_val != v:
+                    return False
+        
         return True
 
     def _set_connections(self, edge_prop, src_node, syn_weight, stim=None):

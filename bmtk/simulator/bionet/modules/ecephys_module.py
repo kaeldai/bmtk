@@ -23,7 +23,7 @@ class BioECEphysUnitsModule(ECEphysUnitsModule):
                             source_node_id = edge.source_node_id
                             spike_trains = self._mapping_strategy.get_spike_trains(source_node_id, source_population)
 
-                            src_cell = net.get_virtual_cells(source_population, source_node_id, spike_trains)
+                            src_cell = net.get_virtual_cells(source_population, source_node_id, spike_trains, sim)
                             trg_cell.set_syn_connection(edge, src_cell, src_cell)
 
                 elif edge_pop.mixed_connections:

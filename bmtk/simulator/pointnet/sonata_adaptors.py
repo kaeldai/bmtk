@@ -24,12 +24,14 @@ def all_null(node_group, column_name):
 
 
 class PointNodeBatched(object):
-    def __init__(self, node_ids, gids, node_types_table, node_type_id):
+    def __init__(self, node_ids, gids, node_types_table, node_type_id, grp_indices, node_group):
         self._n_nodes = len(node_ids)
         self._node_ids = node_ids
         self._gids = gids
         self._nt_table = node_types_table
         self._nt_id = node_type_id
+        self._grp_indices = grp_indices
+        self._node_group = node_group
         self._nest_objs = []
         self._nest_ids = []
 
@@ -54,6 +56,18 @@ class PointNodeBatched(object):
         return self._nt_table[self._nt_id]['model_template'].split(':')[1]
 
     @property
+    def model_name(self):
+        return self.model_template.split(':')[1]
+    
+    @property
+    def model_schema(self):
+        return self.model_template.split(':')[0]
+    
+    @property
+    def model_template(self):
+        return self._nt_table[self._nt_id]['model_template'] # .split(':')
+
+    @property
     def nest_params(self):
         return self._nt_table[self._nt_id]['dynamics_params']
 
@@ -62,8 +76,34 @@ class PointNodeBatched(object):
         return self._nt_table[self._nt_id]['model_type']
 
     def build(self):
-        self._nest_objs = nest.Create(self.nest_model, self.n_nodes, self.nest_params)
+        model_name = self.nest_model
+        model_type = self.model_type
+
+        if py_modules.has_cell_model(self.model_template, self.model_type):
+            cell_fnc = py_modules.cell_model(self.model_template, model_type)
+            self._nest_objs = cell_fnc(self, model_name, self.nest_params)
+        elif py_modules.has_cell_model(self.model_schema, self.model_type):
+            cell_fnc = py_modules.cell_model(self.model_schema, model_type)
+            self._nest_objs = cell_fnc(self, model_name, self.nest_params)
+        else:
+            self._nest_objs = nest.Create(self.nest_model, self.n_nodes, self.nest_params)
+               
         self._nest_ids = self._nest_objs.tolist() if nest_version[0] >= 3 else self._nest_objs
+
+    def __getitem__(self, key):
+        if key in self._node_group or key in self._nt_table.columns:
+            # Since it's possible that this batch only contains a subset of the dataset for this
+            # group, we must filter-out and sort by the passed in indices.
+            grp_vals = self._node_group.get_values(key)
+            return grp_vals[self._grp_indices]
+        elif key in ['node_id', 'node_ids']:
+            return self.node_ids
+        elif key in ['node_type_id', 'node_type_ids']:
+            return np.full(self._n_nodes, self._nt_id, dtype=None)
+        else:
+            msg = f'Could not find property {key} in either nodes or node-types table for {self._node_group}'
+            io.log_error(msg)
+            raise KeyError(msg)
 
 
 class PointNode(SonataBaseNode):
@@ -140,15 +180,17 @@ class PointNodeAdaptor(NodeAdaptor):
 
         nid_groups = {nt_id: np.zeros(ntids_counter[nt_id], dtype=np.uint32) for nt_id in ntids_counter}
         gid_groups = {nt_id: np.zeros(ntids_counter[nt_id], dtype=np.uint32) for nt_id in ntids_counter}
+        grp_indices = {nt_id: np.zeros(ntids_counter[nt_id], dtype=np.uint32) for nt_id in ntids_counter}
         node_groups_counter = {nt_id: 0 for nt_id in ntids_counter}
 
-        for node_id, gid, node_type_id in zip(node_ids, node_gids, node_type_ids):
+        for node_id, gid, node_type_id, idx in zip(node_ids, node_gids, node_type_ids, range(len(node_ids))):
             grp_indx = node_groups_counter[node_type_id]
             nid_groups[node_type_id][grp_indx] = node_id
             gid_groups[node_type_id][grp_indx] = gid
+            grp_indices[node_type_id][grp_indx] = idx
             node_groups_counter[node_type_id] += 1
-
-        return [PointNodeBatched(nid_groups[nt_id], gid_groups[nt_id], node_group.parent.node_types_table, nt_id)
+        
+        return [PointNodeBatched(nid_groups[nt_id], gid_groups[nt_id], node_group.parent.node_types_table, nt_id, grp_indices[nt_id], node_group)
                 for nt_id in ntids_counter]
 
     @staticmethod

@@ -77,7 +77,8 @@ class BioNetwork(SimNetwork):
         self._gid_pool = GidPool()
 
         self.has_spont_syns = False
-        self.spont_syns_filter = None
+        self.spont_syns_filter_pre = None
+        self.spont_syns_filter_post = None
         self.spont_syns_times = None
 
     @property
@@ -88,7 +89,7 @@ class BioNetwork(SimNetwork):
     def py_function_caches(self):
         return nrn
 
-    def set_spont_syn_activity(self, precell_filter, timestamps):
+    def set_spont_syn_activity(self, precell_filter, postcell_filter, timestamps):
         self._model_type_map = {
             'biophysical': BioCellSpontSyn,
             'point_process': PointProcessCellSpontSyns,
@@ -98,7 +99,8 @@ class BioNetwork(SimNetwork):
         }
 
         self.has_spont_syns = True
-        self.spont_syns_filter = precell_filter
+        self.spont_syns_filter_pre = precell_filter
+        self.spont_syns_filter_post = postcell_filter
         self.spont_syns_times = timestamps
 
     def get_node_id(self, population, node_id):
@@ -134,12 +136,12 @@ class BioNetwork(SimNetwork):
         self._gid_pool.add_pool(node_population.name, node_population.n_nodes())
         super(BioNetwork, self).add_nodes(node_population)
 
-    def get_virtual_cells(self, population, node_id, spike_trains):
+    def get_virtual_cells(self, population, node_id, spike_trains, spikes_generator=None, sim=None):
         if node_id in self._virtual_nodes[population]:
             return self._virtual_nodes[population][node_id]
         else:
             node = self.get_node_id(population, node_id)
-            virt_cell = VirtualCell(node, population, spike_trains)
+            virt_cell = VirtualCell(node, population, spike_trains, spikes_generator, sim)
             self._virtual_nodes[population][node_id] = virt_cell
             return virt_cell
 
@@ -151,7 +153,7 @@ class BioNetwork(SimNetwork):
             virt_cell = self._disconnected_source_cells[population][node_id]
         else:
             node = self.get_node_id(population, node_id)
-            virt_cell = VirtualCell(node, population, spike_trains)
+            virt_cell = VirtualCell(node, population, spike_trains, self)
             self._disconnected_source_cells[population][node_id] = virt_cell
 
         return virt_cell
@@ -369,7 +371,7 @@ class BioNetwork(SimNetwork):
 
         return selected_edges
 
-    def add_spike_trains(self, spike_trains, node_set):
+    def add_spike_trains(self, spike_trains, node_set, spikes_generator=None, sim=None):
         self._init_connections()
 
         src_nodes = [node_pop for node_pop in self.node_populations if node_pop.name in node_set.population_names()]
@@ -379,7 +381,7 @@ class BioNetwork(SimNetwork):
                 if edge_pop.virtual_connections:
                     for trg_nid, trg_cell in self._rank_node_ids[edge_pop.target_nodes].items():
                         for edge in edge_pop.get_target(trg_nid):
-                            src_cell = self.get_virtual_cells(source_population, edge.source_node_id, spike_trains)
+                            src_cell = self.get_virtual_cells(source_population, edge.source_node_id, spike_trains, spikes_generator, sim)
                             trg_cell.set_syn_connection(edge, src_cell, src_cell)
 
                 elif edge_pop.mixed_connections:

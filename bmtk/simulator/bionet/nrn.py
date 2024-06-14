@@ -23,6 +23,7 @@
 import sys
 import os
 import glob
+from pathlib import Path
 import neuron
 from neuron import h
 
@@ -46,18 +47,27 @@ def clear_gids():
     pc.barrier()
 
 
-def load_neuron_modules(mechanisms_dir, templates_dir, default_templates=True):
+def load_neuron_modules(mechanisms_dir, templates_dir, default_templates=True, use_old_import3d=False):
     """
 
     :param mechanisms_dir:
     :param templates_dir:
     :param default_templates:
     """
-    h.load_file('stdgui.hoc')
-
     bionet_dir = os.path.dirname(__file__)
-    h.load_file(os.path.join(bionet_dir, 'import3d.hoc').replace("\\","/"))  # customized import3d.hoc to supress warnings
-    h.load_file(os.path.join(bionet_dir,'default_templates',  'advance.hoc').replace("\\","/"))
+    
+    h.load_file('stdgui.hoc')   
+    
+    if use_old_import3d:
+        # Older versions of BMTK used a modified import3d.hoc that is saved in the current directory which
+        # due to being out-of-date can have issues with newer HOC models. Should be replaced fully, but 
+        # until we know the side-effects have a flag to use the old "import3d.hoc" file
+        h.load_file(os.path.join(bionet_dir, 'import3d.hoc').replace("\\","/"))  
+    else:
+        # This will load the import3d.hoc that is saved as a part of nrniv.
+        h.load_file('import3d.hoc')
+    
+    h.load_file(os.path.join(bionet_dir, 'default_templates',  'advance.hoc').replace("\\","/"))
 
     if isinstance(mechanisms_dir, list):
         for mdir in mechanisms_dir:
@@ -79,17 +89,25 @@ def load_neuron_modules(mechanisms_dir, templates_dir, default_templates=True):
         load_templates(templates_dir)
 
 
-def load_templates(template_dir):
+def load_templates(templates):
     """Load all templates to be available in the hoc namespace for instantiating cells"""
     cwd = os.getcwd()
-    os.chdir(template_dir)
-
-    hoc_templates = glob.glob("*.hoc")
-
-    for hoc_template in hoc_templates:
-        h.load_file(str(hoc_template))
-
-    os.chdir(cwd)
+    templates_list = templates if isinstance(templates, (list, tuple)) else [templates]
+    for templates_cont in templates_list:
+        if Path(templates_cont).is_dir():
+            # If string is a path to a directory, find all hoc files and load them in one at a time.
+            # TODO: Add option to sort before loading
+            os.chdir(templates_cont)
+            hoc_templates = glob.glob("*.hoc")
+            for hoc_template in hoc_templates:
+                h.load_file(str(hoc_template))
+            os.chdir(cwd)
+            
+        elif Path(templates_cont).is_file():
+            # Otherwise if just a file, eg .hoc, load it in separartly.
+            h.load_file(str(templates_cont))
+        else:
+            io.log_warning(f'Unable to find and load {templates_cont} templates. Please ensure it is a valid directory or hoc file!', display_once=True)
 
 
 def reset():
