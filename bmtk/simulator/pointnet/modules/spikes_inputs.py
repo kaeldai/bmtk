@@ -24,7 +24,7 @@ import os
 from bmtk.simulator.pointnet.modules.sim_module import SimulatorMod
 from bmtk.simulator.pointnet.io_tools import io
 from bmtk.utils.reports.spike_trains import SpikeTrains
-from bmtk.simulator.bionet.pyfunction_cache import py_modules
+from bmtk.simulator.pointnet.pyfunction_cache import py_modules
 
 
 class SpikesInputsMod(SimulatorMod):
