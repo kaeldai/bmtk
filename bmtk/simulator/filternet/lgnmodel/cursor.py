@@ -225,14 +225,20 @@ class SeparableKernelCursor(object):
         full_temporal_kernel = self.temporal_kernel.full()
 
         # Convolve every frame in the movie with the spatial filter. First find the range of rows (range min and max)
-        #  and columns in the filter that are above threshold, that way only portion of movie/filter are multiplied
+        # and columns in the filter that are above threshold, that way only portion of movie/filter are multiplied
         # together
         
         # Using > instead of >= makes the code faster if there are many zeros in the
         # spatial kernel. This will not affect the results.
         nonzero_inds = np.where(np.abs(full_spatial_kernel[0, :, :]) > threshold)
-        rm, rM = nonzero_inds[0].min(), nonzero_inds[0].max()
-        cm, cM = nonzero_inds[1].min(), nonzero_inds[1].max()
+        if len(nonzero_inds[0]) == 0:
+            # If spatial kernel is all 0's then don't try to segment the receptive filed. Use full frame during convolve.
+            rm, rM = 0, 0
+            cm, cM = full_spatial_kernel.shape[1], full_spatial_kernel.shape[2]
+        else:
+            rm, rM = nonzero_inds[0].min(), nonzero_inds[0].max()
+            cm, cM = nonzero_inds[1].min(), nonzero_inds[1].max()
+        
         convolution_answer_sep_spatial = (self.movie.data[:, rm:rM+1, cm:cM+1] *
                                           full_spatial_kernel[:, rm:rM+1, cm:cM+1]).sum(axis=1).sum(axis=1)
 
