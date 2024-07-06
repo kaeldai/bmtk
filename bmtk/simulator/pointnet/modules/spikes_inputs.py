@@ -48,7 +48,7 @@ class SpikesInputsMod(SimulatorMod):
                 io.log_exception(f'Could not find @spikes_generator function "{spikes_generator}" required for {self._name} inputs.')
             spikes_func = py_modules.spikes_generator(name=spikes_generator)
             
-            self._spike_trains = SpikeTrains(cace_to_disk=False)
+            self._spike_trains = SpikeTrains(cache_to_disk=False)
             for node in node_set.fetch_nodes():
                 timestamps = spikes_func(node, sim)
                 self._spike_trains.add_spikes(
