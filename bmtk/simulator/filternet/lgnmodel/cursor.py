@@ -76,6 +76,8 @@ class KernelCursor(object):
         
         t_range = convert_tmin_tmax_framerate_to_trange(t_min, t_max, self.movie.frame_rate)[::int(downsample)]
         y_vals = np.array([self(t) for t in t_range])
+        # normalize by the frame rate
+        y_vals = y_vals * 1000.0 / self.movie.frame_rate
 
         return t_range, y_vals  
     
@@ -246,6 +248,8 @@ class SeparableKernelCursor(object):
         sig_tmp = np.zeros(len(full_temporal_kernel) + len(convolution_answer_sep_spatial) - 1)
         sig_tmp[len(full_temporal_kernel)-1:] = convolution_answer_sep_spatial
         convolution_answer_sep = spsig.convolve(sig_tmp, full_temporal_kernel[::-1], mode='valid')
+        # normalize by the frame rate
+        convolution_answer_sep = convolution_answer_sep * 1000.0 / self.movie.frame_rate
         t = np.arange(len(convolution_answer_sep))/self.movie.frame_rate
 
         return t, convolution_answer_sep
