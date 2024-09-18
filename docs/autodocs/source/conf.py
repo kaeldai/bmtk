@@ -41,12 +41,13 @@ extensions = [
     'numpydoc',
     'sphinx.ext.autosummary',
     'nbsphinx',
-    'IPython.sphinxext.ipython_console_highlighting'
+    'IPython.sphinxext.ipython_console_highlighting',
+    'sphinx_design'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-#templates_path = ['_templates', 'aibs_sphinx/templates']
-templates_path = ['aibs_sphinx/templates']
+# templates_path = ['_templates', 'aibs_sphinx/templates']
+templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -100,10 +101,22 @@ numpydoc_show_class_members = False
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
+# html_theme = 'pydata'
+
+# html_css_files = [
+#     'custom.css',
+# ]
 
 html_theme_path = ['.']
-html_theme = 'aibs_sphinx'
+# html_theme = 'aibs_sphinx'
 # html_theme = 'alabaster'
+html_theme = 'pydata_sphinx_theme'
+html_logo = "_static/images/allen-logo.svg"
+html_theme_options = {
+    'logo': '_static/images/allen-logo.svg',
+    "navbar_align": "left",
+    "secondary_sidebar_items": []
+}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -114,7 +127,8 @@ html_theme = 'aibs_sphinx'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static', 'aibs_sphinx/static']
+# html_static_path = ['_static', 'aibs_sphinx/static']
+html_static_path = ['_static']
 html_extra_path = ['../.nojekyll']
 html_theme_options = {
     "sidebarwidth": "300"
@@ -222,5 +236,5 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
 
 
 def setup(app):
-    copy_tutorials()
+    # copy_tutorials()
     app.connect('autodoc-skip-member', autodoc_skip_member)
