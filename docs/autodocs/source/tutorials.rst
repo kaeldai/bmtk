@@ -1,5 +1,7 @@
-Guides
-******
+######################
+Tutorials and Examples
+######################
+
 
 Basic Usage
 ===========

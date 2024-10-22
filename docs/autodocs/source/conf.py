@@ -103,9 +103,9 @@ numpydoc_show_class_members = False
 # html_theme = 'alabaster'
 # html_theme = 'pydata'
 
-# html_css_files = [
-#     'custom.css',
-# ]
+html_css_files = [
+    'custom.css',
+]
 
 html_theme_path = ['.']
 # html_theme = 'aibs_sphinx'
@@ -113,10 +113,21 @@ html_theme_path = ['.']
 html_theme = 'pydata_sphinx_theme'
 html_logo = "_static/images/allen-logo.svg"
 html_theme_options = {
-    'logo': '_static/images/allen-logo.svg',
-    "navbar_align": "left",
-    "secondary_sidebar_items": []
+    "show_prev_next": False,             # Do not show the prev & next buttons at the bottom of the page
+    "header_links_before_dropdown": 8,   # By default pyshinx will only show 5 items in navbar then a "more" dropdown. Increase num of items to show all top pages
 }
+
+# html_theme_options = {
+#     # 'logo': '_static/images/allen-logo.svg',
+#     # "navbar_align": "left",
+#     # "secondary_sidebar_items": [],
+#     "show_prev_next": False,
+# }
+
+# html_sidebars = {
+#   "Running Network Simulations with BMTK": []
+# }
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -130,20 +141,29 @@ html_theme_options = {
 # html_static_path = ['_static', 'aibs_sphinx/static']
 html_static_path = ['_static']
 html_extra_path = ['../.nojekyll']
-html_theme_options = {
-    "sidebarwidth": "300"
-}
+# html_theme_options = {
+#     # "sidebarwidth": "300",
+#     "navbar_align": "left",
+# }
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
+# html_sidebars = {
+#     # '**': [
+#     #     'globaltoc.html',
+#     #     'searchbox.html'
+#     # ],
+#     # "simulators_guide": []
+# }
+
 html_sidebars = {
     '**': [
         'globaltoc.html',
-        'searchbox.html'
-    ]
+        # 'searchbox.html'
+    ],
 }
 
 

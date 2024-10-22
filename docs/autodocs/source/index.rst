@@ -1,24 +1,25 @@
-.. Brain Modeling Toolkit documentation master file, created by
-   sphinx-quickstart on Tue Sep 26 10:33:33 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+############################################
+Welcome to the Brain Modeling Toolkit (BMTK)
+############################################
 
-#####################################
-Welcome to the Brain Modeling Toolkit
-=====================================
+
+.. toctree::
+   :hidden:
+
+   About BMTK <self>
 
 .. toctree::
    :maxdepth: 1
    :hidden:
-   :caption: Contents
 
+   About BMTK <index.rst>
    news_and_events
-   Installation <installation>
-   user_guides
-   Example Models <examples>
-   Github <https://github.com/AllenInstitute/bmtk.git>
-   API <bmtk/bmtk>
-   Contact <registration>
+   contact_us
+   installation
+   user_guide
+   tutorials
+   developers_guide
+   
    
    
 .. card:: News and Events

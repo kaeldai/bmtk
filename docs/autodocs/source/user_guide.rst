@@ -1,6 +1,6 @@
-###########
-User Guides
-###########
+##########
+User Guide
+##########
 
 ******************************************
 Overview of BMTK Workflow and Architecture
