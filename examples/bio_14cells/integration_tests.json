@@ -19,6 +19,7 @@
             "check-cmd": "${python} check.simulation.py",
             "check-opts": [
                 "--save-to=${results-output}",
+                "--hide-results",
                 "config.simulation.json"
             ],
             "keywords": ["bionet"],

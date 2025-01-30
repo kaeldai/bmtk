@@ -1,0 +1,69 @@
+{
+    "tests": [
+        {
+            "name": "pointnet-120cells-build-network",
+            "run-cmd": "${python} build_network.py",
+            "check-cmd": "${python} check.network.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--network-dir=network",
+                "--hide-results"
+            ],
+            "keywords": ["builder", "pointnet"],
+            "enabled": false 
+        },
+
+        {
+            "name": "pointnet-120cells-syns",
+            "run-cmd": "${exec-pointnet} run_pointnet.py",
+            "run-opts": "config.simulation.json",
+            "check-cmd": "${python} check.simulation.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation.json"
+            ],
+            "keywords": ["pointnet"],
+            "enabled": true
+        },
+        {
+            "name": "pointnet-120cells-iclamp",
+            "run-cmd": "${exec-pointnet} run_pointnet.py",
+            "run-opts": "config.simulation_iclamp.json",
+            "check-cmd": "${python} check.simulation_iclamp.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation_iclamp.json"
+            ],
+            "keywords": ["pointnet"],
+            "enabled": true
+        },
+        {
+            "name": "pointnet-120cells-iclamps-list",
+            "run-cmd": "${exec-pointnet} run_pointnet.py",
+            "run-opts": "config.simulation_iclamp.aslist.json",
+            "check-cmd": "${python} check.simulation_iclamp.aslist.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation_iclamp.aslist.json"
+            ],
+            "keywords": ["pointnet"],
+            "enabled": true
+        },
+        {
+            "name": "pointnet-120cells-iclamps-csv",
+            "run-cmd": "${exec-pointnet} run_pointnet.py",
+            "run-opts": "config.simulation_iclamp.csv.json",
+            "check-cmd": "${python} check.simulation_iclamp.csv.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation_iclamp.csv.json"
+            ],
+            "keywords": ["pointnet"],
+            "enabled": true
+        }
+    ]
+}

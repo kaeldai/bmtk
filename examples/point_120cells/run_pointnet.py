@@ -1,4 +1,5 @@
 import os, sys
+import argparse
 
 from bmtk.simulator import pointnet
 
@@ -13,6 +14,8 @@ def run(config_file):
 
 
 if __name__ == '__main__':
-    # Find the appropriate config.json file
-    run('config.simulation.json')
-    # run('config.simulation_perturbations.json')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('config_file', nargs='?', type=str, default='config.simulation.json')
+    args, unknown = parser.parse_known_args()
+
+    run(config_file=args.config_file)

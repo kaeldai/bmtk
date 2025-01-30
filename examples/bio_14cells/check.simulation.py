@@ -50,17 +50,21 @@ def check_calcium_report(file_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('config_file', nargs='?', type=str, default='config.simulation.json')
-    # parser.add_argument('--uuid', nargs='?', type=str, default='')
     parser.add_argument('--save-to', nargs='?', type=str, default=None)
-    
+    parser.add_argument('--hide-results', action='store_true')
     args, unknown = parser.parse_known_args()
 
     config = ConfigJSON(args.config_file)
     results = check_membrane_report(config.get_report_file('membrane_potential'))
     results += check_spikes(config.get_spikes_file(ext='csv'))
     results += check_spikes(config.get_spikes_file(ext='h5'))
-    # results += check_ecp(config.get_report_file('ecp'))
     results += check_syn_report(config.get_report_file('syn_report'))
     results += check_calcium_report(config.get_report_file('calcium_concentration'))
-    results.save_to(args.save_to)
+
+    if args.save_to:
+        results.save_to(args.save_to)
+
+    if not args.hide_results:
+        results.display() 
+
     sys.exit(get_return_code(results))
