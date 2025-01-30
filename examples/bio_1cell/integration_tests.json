@@ -1,0 +1,47 @@
+{
+    "tests": [
+        {
+            "name": "bionet-1cell-syns",
+            "run-cmd": "${exec-bionet} run_bionet.py",
+            "run-opts": [
+                "config.simulation_syns.json"
+            ],
+            "check-cmd": "${python} check.simulation_syns.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation_syns.json"
+            ],
+
+            "keywords": ["bionet", "membrane_report"],
+            "enabled": true
+        },
+        {
+            "name": "bionet-1cell-iclamp",
+            "run-cmd": "${exec-bionet} run_bionet.py",
+            "run-opts": [
+                "config.simulation_iclamp.json"
+            ],
+            "check-cmd": "${python} check.simulation_iclamp.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation_iclamp.json"
+            ],
+            "keywords": ["bionet", "membrane_report"],
+            "enabled": true
+        },
+        {
+            "name": "bionet-1cell-build-network",
+            "run-cmd": "${python} build_network.py",
+            "check-cmd": "${python} check.network.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--network-dir=network",
+                "--hide-results"
+            ],
+            "keywords": ["builder"],
+            "enabled": false 
+        }
+    ]
+}

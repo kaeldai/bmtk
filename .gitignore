@@ -32,6 +32,7 @@ examples/bio_simulated_annealing/updated_weights/*
 examples/filter_movie/boc/*
 examples/filter_movie/bob_images/*
 examples/filter_movie/movies/*
+examples/.results.integration_tests.examples.csv
 /.eggs
 benchmarks/.asv
 **/x86_64/**

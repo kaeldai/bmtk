@@ -1,0 +1,19 @@
+{   
+    "imports": [
+        "**/integration_tests.json"
+    ],
+
+    "env-variables": {
+        "results-output": "${json-dir}/.results.integration_tests.examples.csv"
+    },
+
+    "tests": [
+        {
+            "name": "compile_bionet_mods",
+            "working-dir": "${json-dir}/bio_components/mechanisms",
+            "setup-cmd": "nrnivmodl modfiles",
+            "enabled": true,
+            "keywords": ["bionet", "nrniv"]
+        }
+    ]
+}

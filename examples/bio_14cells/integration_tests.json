@@ -1,0 +1,28 @@
+{
+    "tests": [
+        {
+            "name": "bionet-14cells-build-network",
+            "run-cmd": "${exec-bionet} build_network.py",
+            "check-cmd": "${python} check.network.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--network-dir=network",
+                "--hide-results"
+            ],
+            "keywords": ["builder"],
+            "enabled": false 
+        },
+        {
+            "name": "bionet-14cells-syns",
+            "run-cmd": "${exec-bionet} run_bionet.py",
+            "run-opts": "config.simulation.json",
+            "check-cmd": "${python} check.simulation.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "config.simulation.json"
+            ],
+            "keywords": ["bionet"],
+            "enabled": true
+        }
+    ]
+}
