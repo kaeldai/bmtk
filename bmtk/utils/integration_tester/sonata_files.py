@@ -602,7 +602,10 @@ class NodesFile(CheckSONATATrait, RunCheckTrait):
         for group_id in self.group_ids():
             h5_cols |= set(self.nodes[group_id].keys())
         return h5_cols
-    
+
+    def hdf5_attributes_contains(self, attribute_name):
+        return attribute_name in self.hdf5_attributes()
+
     def n_attributes(self):
         return len(self.csv_attributes() | self.hdf5_attributes())
 

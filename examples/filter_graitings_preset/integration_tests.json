@@ -1,0 +1,29 @@
+{
+    "tests": [
+        {
+            "name": "filternet-gratings-preset-build-network",
+            "run-cmd": "${python} build_network.py",
+            "check-cmd": "${python} check.network.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--network-dir=network",
+                "--hide-results"
+            ],
+            "keywords": ["builder", "filternet"],
+            "enabled": false 
+        },
+        {
+            "name": "filternet-gratings-preset",
+            "run-cmd": "${exec-filternet} run_filternet.py",
+            "run-opts": "config.simulation.json",
+            "check-cmd": "${python} check.simulation.py",
+            "check-opts": [
+                "--save-to=${results-output}",
+                "--hide-results",
+                "config.simulation.json"
+            ],
+            "keywords": ["filternet", "drifting-gratings"],
+            "enabled": true
+        }
+    ]
+}

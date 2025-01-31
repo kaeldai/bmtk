@@ -38,7 +38,7 @@
     "log_file": "log.txt",
     "output_dir": "$OUTPUT_DIR",
     "rates_csv": "rates.csv",
-    "spikes_csv": "spikes.csv",
+    "spikes_file_csv": "spikes.csv",
     "spikes_file": "spikes.h5",
     "overwrite_output_dir": true
   },
